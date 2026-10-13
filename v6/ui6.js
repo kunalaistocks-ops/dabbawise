@@ -1,0 +1,151 @@
+/* Dabbawise v6 — visual + smart layer. Loaded after app.js. */
+ICP.clock='<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>';
+/* ---- content polish ---- */
+ANS.forEach(a=>{if(SHORT[a.id]&&!(typeof AW!=='undefined'&&AW[a.id]&&AW[a.id][0]))a.short=SHORT[a.id];a.q=a.q.replace(/^Is (\w[\w\s&-]*s) good for kids\?$/,(m,x)=>/(ss|us)$/.test(x)?m:'Are '+x+' good for kids?').replace(/^Are (milk|rice|honey|cheese|ghee|paneer|oats|poha|chicken|fish|popcorn|jaggery|curd \/ yogurt|dal \/ lentils)\b/i,'Is $1')});
+RECIPES.forEach(r=>{const out=[];r.steps.forEach(st=>{st=st.replace(/\s+/g,' ');if(out.length&&/^\s|^[a-z]/.test(st))out[out.length-1]+=', '+st.trim();else out.push(st.trim())});r.steps=out.map(x=>x[0].toUpperCase()+x.slice(1));r.intro=RECIPE_INTRO[r.id]||r.intro||''});
+HEAL.forEach(h=>h.intro=HEAL_INTRO[h.id]||'');GUIDES.forEach(g=>g.intro=GUIDE_INTRO[g.id]||'');
+const firstName=()=>{const k=kids()[0];return k&&k.name?k.name:''};
+const ageLbl=k=>k.years?k.years+(k.years==1?' yr':' yrs'):(AGES.find(a=>a[0]===k.age)||['',''])[1];
+const forWho=()=>{const ks=kids();if(!ks.length)return'For your family';if(ks.length===1)return'For '+esc(ks[0].name)+' · '+esc(ageLbl(ks[0]));return'For '+ks.map(k=>esc(k.name)).join(' & ')};
+const moment=()=>{let h=new Date().getHours();if(h<5)h+=24;return TIMES.find(t=>h>=t[0]&&h<t[1])||TIMES[0]};
+const momentType=()=>({Morning:'breakfast',Midday:'lunchbox',Afternoon:'snack',Evening:'dinner',Night:'dinner'})[moment()[2]];
+function seasonNow(){const m=new Date().getMonth();const L=SEASONS[REG()];if(!US())return L[m>=2&&m<=5?0:m>=6&&m<=8?1:m>=9&&m<=10?2:3];const i=m>=2&&m<=4?'Spring':m>=5&&m<=7?'Summer':m>=8&&m<=10?'Fall':'Winter';return L.find(s=>s[0].startsWith(i))||L[0]}
+function weekRecipeIds(){return Object.values(plan()).flat().map(x=>typeof x==='string'?x:x&&x.id).filter(Boolean)}
+/* diet & allergy logic incl. vegan / other */
+function dietOK(r,diet){if(!diet||diet==='nonveg'||diet==='other')return true;if(diet==='jain')return r.tags.includes('jain');if(diet==='egg')return r.tags.includes('veg')||r.tags.includes('egg')&&!r.tags.includes('non-veg');const veg=r.tags.includes('veg')&&!r.tags.includes('egg')&&!r.tags.includes('non-veg');if(diet==='vegan')return veg&&!recAllergens(r).includes('milk')&&!/honey|ghee|butter|paneer|curd|yogurt|cheese/i.test(r.ing.join(' '));return veg}
+function fitFamily(r){const ks=kids();if(!ks.length)return{ok:true,flags:[],diet:true};const al=recAllergens(r),txt=(r.name+' '+r.ing.join(' ')).toLowerCase();const flags=[];
+ ks.forEach(k=>{if(k.noAllergy)return;(k.allergies||[]).forEach(x=>al.includes(x)&&flags.push(`${k.name}: ${x}`));(k.allergyOther||'').split(/[,;]/).map(x=>x.trim().toLowerCase()).filter(x=>x.length>2).forEach(x=>txt.includes(x)&&flags.push(`${k.name}: ${x}`))});
+ const d=ks.every(k=>dietOK(r,k.diet));return{ok:d&&!flags.length,flags,diet:d}}
+/* ---- visual helpers ---- */
+const GROUP_OF={breakfast:'grain',dabba:'grain',lunchbox:'grain',snack:'fruit',dinner:'protein'};
+var aCard=a=>`<a class="card tap acard" href="#/a/${a.id}"><span class="thumb">${catArt(a.cat,{w:96,h:96})}</span><span class="grow"><span class="meta"><span class="tag cat-${a.cat}">${CATS[a.cat]}</span>${a.safety&&a.safety!=='—'?'<span class="tag warnt">Safety note</span>':''}</span><h3>${esc(a.q)}</h3><p class="mute clamp">${esc(a.short)}</p></span></a>`;
+function rCard(r){const f=fitFamily(r);return`<a class="card tap rcard6" href="#/r/${r.id}"><span class="art-wrap">${recipeArt(r,{w:200,h:130})}<span class="badge">${r.mins?r.mins+' min':'No cook'}</span></span><span class="rbody"><h3>${esc(r.name)}</h3><p class="mute small clamp">${esc(r.intro||r.tip)}</p><span class="meta">${r.tags.slice(0,2).map(t=>`<span class="tag">${t}</span>`).join('')}${f.flags.length?`<span class="tag bad">Allergen: ${esc(f.flags.join(', '))}</span>`:''}${kids().length&&!f.diet?'<span class="tag warnt">Diet mismatch</span>':''}</span></span></a>`}
+const carousel=(label,items,cls='')=>`<div class="car ${cls}" role="region" aria-label="${esc(label)}" tabindex="0">${items.join('')}</div>`;
+const secH=(t,link,linkT='See all')=>`<div class="sech"><h2 class="sec">${t}</h2>${link?`<a href="${link}" class="seeall">${linkT} →</a>`:''}</div>`;
+const healTile=h=>`<a class="card tap htile mood-${h.id}" href="#/heal/s/${h.id}">${healArt(h.id,{w:200,h:120})}<span class="hb"><b>${esc(h.t)}</b><small class="clamp">${esc(h.intro||(US()?h.us:h.in)[0])}</small></span></a>`;
+const mythFlip=(a,i)=>`<button class="flip" aria-pressed="false" onclick="this.classList.toggle('on');this.setAttribute('aria-pressed',this.classList.contains('on'))"><span class="face front"><span class="tag bad">Myth</span><b>${esc(a.q.replace(/^Myth:\s*/,''))}</b><small>Tap to flip</small></span><span class="face back"><span class="tag good">Fact</span><span>${esc(a.short)}</span><a href="#/a/${a.id}" onclick="event.stopPropagation()">Sources →</a></span></button>`;
+const guideCard=g=>{const p=LS('gp_'+g.id,0);return`<a class="card tap gcard" href="#/g/${g.id}">${guideArt(g.id,{w:240,h:120})}<span class="gb"><span class="kicker">${g.steps.length} steps · ${g.mins} min${p?' · '+Math.round(p/g.steps.length*100)+'% done':''}</span><h3>${esc(g.title)}</h3><p class="mute small clamp">${esc(g.intro)}</p><span class="prog"><span style="width:${p/g.steps.length*100}%"></span></span></span></a>`};
+/* ---- TODAY ---- */
+function pickToday(){const ty=momentType(),ks=kids(),used=weekRecipeIds(),sh=LS('shift_'+DAY,0);let rs=recs().filter(r=>fitFamily(r).ok);if(!rs.length)rs=recs();let t=rs.filter(r=>r.type===ty&&!used.includes(r.id));if(!t.length)t=rs.filter(r=>r.type===ty);if(!t.length)t=rs;return t[(DAY+sh)%t.length]}
+function nextActions(){const a=[],ks=kids(),p=Object.values(plan()).flat().length,sh=LS('shop_'+REG(),[]).filter(x=>!x.d).length,bx=LS('boxes_'+REG(),[]).length;
+ if(!ks.length)a.push(['#/onboard/2','users','Add your child — personalise everything']);
+ if(!p)a.push(['#/week','cal','Plan 3 dinners this week']);else a.push(['#/week','cal',p+' meals planned · finish the week']);
+ if(!bx)a.push(['#/lunchbox','box','Build tomorrow’s '+T().box]);else a.push(['#/lunchbox','box','Pick a fresh '+T().box+' (no repeats)']);
+ if(sh)a.push(['#/shop','cart',sh+' item'+(sh>1?'s':'')+' on your list']);
+ if(!goals().length)a.push(['#/onboard/3','star','Tell us what would help']);
+ const s=seasonNow()[0];a.push(['#/heal/season','leaf','What’s good in '+s.split(' (')[0].toLowerCase()]);
+ return a.slice(0,5)}
+V.today=()=>{const ks=kids(),g=goals(),m=moment(),meal=pickToday(),hr=new Date().getHours();const hello=hr<5?'Still up':hr<12?'Good morning':hr<17?'Good afternoon':'Good evening';
+ const pool=ans().filter(a=>a.cat!=='myths'&&SHORT[a.id]);let pick=g.flatMap(x=>GOALMAP[x]||[]).map(getA).filter(a=>a&&ans().includes(a));if(!pick.length)pick=pool.length?pool:ans();const q=pick[DAY%pick.length];
+ const myths=ans().filter(a=>a.cat==='myths');const wd=WHEN_DAY.find(w=>w[0].startsWith(m[3].split(' /')[0]))||WHEN_DAY[0];const se=seasonNow();
+ const acts=['Add one new colour to today’s '+T().box+'.','Eat one meal together with screens off.','Swap one packaged snack for fruit or something roasted.','Pair an iron-rich food with a squeeze of lemon.','Let your child pick a vegetable at the shop.','Offer water before anything sweet to drink.','Give your child one real kitchen job today.'];
+ const done=LS('done_'+DAY,false);const tl=TYPES().find(t=>t[0]===meal.type);
+ const sameType=recs().filter(r=>r.type===meal.type&&r.id!==meal.id&&fitFamily(r).ok).slice((DAY*3)%5,(DAY*3)%5+8);
+ const heals=healList();const hs=[...heals.slice(DAY%heals.length),...heals.slice(0,DAY%heals.length)].slice(0,8);
+ return`<section class="hero6"><div class="hcopy"><p class="eyebrow">${new Date().toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'long'})} · ${m[2].toLowerCase()}</p><h1>${hello}${ks.length?',<br><em>'+esc(ks.map(k=>k.name).join(' & '))+'’s</em> kitchen':'.'}</h1><p class="lede">${ks.length?'Here’s what we’d put on the table today.':'Here’s one good idea for the next meal — no account, no fuss.'}</p></div>
+ <article class="plate"><a href="#/r/${meal.id}" class="pimg" aria-label="${esc(meal.name)}">${plateArt(meal)}</a><div class="pb"><span class="kicker">Today’s plate · ${esc(tl?tl[1]:meal.type)} · ${forWho()}</span><h2><a href="#/r/${meal.id}">${esc(meal.name)}</a></h2><p>${esc(meal.intro||meal.tip)}</p><p class="mute small">${meal.mins?meal.mins+' min':'No cooking'} · serves ${meal.serves}${weekRecipeIds().includes(meal.id)?'':' · not on this week’s plan yet'}</p>
+ <div class="actions"><a class="btn pri" href="#/r/${meal.id}">Cook this</a><button onclick="pickDay('${meal.id}')">${ic('cal')}Add to week</button><button onclick="SV('shift_'+DAY,LS('shift_'+DAY,0)+1);render()" aria-label="Show another idea">${ic('shuffle')}Another</button></div></div></article></section>
+ <nav class="nba" aria-label="Next best actions">${nextActions().map(x=>`<a class="nchip" href="${x[0]}">${ic(x[1])}<span>${x[2]}</span></a>`).join('')}</nav>
+ ${secH('Today in three minutes')}
+ <div class="trio"><a class="card tap qcard" href="#/a/${q.id}">${catArt(q.cat,{w:280,h:110})}<span class="qb"><span class="kicker">Today’s question${g.length?' · picked for your goals':''}</span><h3>${esc(q.q)}</h3><p>${esc(q.short)}</p><span class="more">Read the answer →</span></span></a>
+ ${mythFlip(myths[DAY%myths.length])}
+ <div class="card action6"><span class="kicker">One small thing</span><h3>${acts[DAY%acts.length]}</h3><button class="${done?'':'pri'} pop" aria-pressed="${done}" onclick="SV('done_'+DAY,${!done});render();${done?'':"toast('Lovely. That’s today done.')"}">${done?ic('check')+'Done — nice work':'I did it'}</button></div></div>
+ ${secH('Right now: '+esc(m[3].toLowerCase()),'#/heal/day','Whole day')}<div class="card moment"><p><b>${esc(wd[1])}</b></p><p class="mute small">Try: ${esc(wd[2][REG()])}</p></div>
+ ${carousel('More '+(tl?tl[1]:'')+' ideas',sameType.map(rCard),'rc')}
+ ${secH('In season: '+esc(se[0]),'#/heal/season','All seasons')}<a class="card tap season" href="#/heal/season">${healArt(US()?(/Summer/.test(se[0])?'hot-weather':'cold-weather'):(/Monsoon/.test(se[0])?'monsoon':/Summer/.test(se[0])?'hot-weather':'cold-weather'),{w:360,h:120})}<span class="sb"><b>${esc(se[1])}</b><small class="mute">${esc(se[2])}</small></span></a>
+ ${secH('Foods that heal','#/heal')}${carousel('Foods that heal',hs.map(healTile),'hc')}
+ ${secH('Keep learning','#/guides')}${carousel('Guides',GUIDES.filter(x=>x.id!=='dabba'||!US()).map(guideCard),'gc')}
+ ${secH('Parents are asking')}<div class="card plist">${ans().filter(a=>['dabba-return','picky','breakfast-skip','grandparents','halloween','screen-eating','budget'].includes(a.id)).slice(0,4).map(a=>`<a class="lrow" href="#/a/${a.id}"><span>${esc(a.q)}</span>${ic('right')}</a>`).join('')}</div>
+ ${secH('Tools')}<div class="grid2 tools6">${[['#/lunchbox','box',T().Box+' builder','Balance in five taps'],['#/tools/label','scan','Label decoder','Paste ingredients'],['#/tools/choke','shield','Choking checker','Safe shapes by age'],['#/myths','leaf','Myth vs fact','Flip the cards']].map((x,i)=>`<a class="card tap tool6 t${i}" href="${x[0]}"><span class="ticon">${ic(x[1])}</span><b>${x[2]}</b><small>${x[3]}</small></a>`).join('')}</div>`};
+/* ---- ONBOARDING ---- */
+const NEWK=()=>({name:'',years:'',age:'4-8y',diet:'',dietOther:'',allergies:[],noAllergy:false,allergyOther:''});
+const dkGet=()=>LS('draftKids',kids().length?kids():[NEWK()]);
+function dk(i,f,v,re){const k=dkGet();k[i][f]=v;if(f==='years'){const y=+v;if(v!=='')k[i].age=y<1?'6-12m':y<4?'1-3y':y<9?'4-8y':y<14?'9-13y':'teens'}SV('draftKids',k);if(re)render()}
+function dkA(i,x){const k=dkGet(),c=k[i];if(x==='none'){c.noAllergy=!c.noAllergy;if(c.noAllergy){c.allergies=[];c.allergyOther=''}}else{c.noAllergy=false;c.allergies=c.allergies.includes(x)?c.allergies.filter(y=>y!==x):[...c.allergies,x]}SV('draftKids',k);render()}
+function dkAdd(){const k=dkGet();k.push(NEWK());SV('draftKids',k);render()}
+function dkDel(i){const k=dkGet();k.splice(i,1);if(!k.length)k.push(NEWK());SV('draftKids',k);render()}
+let OBERR=[];
+function dkSave(){const k=dkGet();OBERR=[];k.forEach((c,i)=>{const touched=c.name.trim()||c.diet||c.allergies.length||c.noAllergy||c.allergyOther;if(!touched)return;if(!c.name.trim())OBERR.push([i,'name','Add a name or nickname so we can personalise.']);if(!c.diet)OBERR.push([i,'diet','Choose a diet — “Other” is fine.']);if(!c.noAllergy&&!c.allergies.length&&!c.allergyOther.trim())OBERR.push([i,'alg','Choose “None” or at least one allergy.']);if(c.years!==''&&(+c.years<0||+c.years>18||isNaN(+c.years)))OBERR.push([i,'years','Age should be 0–18.'])});
+ if(OBERR.length){render();setTimeout(()=>{const e=document.querySelector('.ferr');e&&e.scrollIntoView({block:'center'})},120);return}
+ SV('kids',k.filter(c=>c.name.trim()).map(c=>({...c,name:c.name.trim(),diet:c.diet||'other',years:c.years===''?'':+c.years})));SV('draftKids',null);go('#/onboard/3')}
+const err=(i,f)=>{const e=OBERR.find(x=>x[0]===i&&x[1]===f);return e?`<p class="ferr" role="alert">${ic('alert')}${e[2]}</p>`:''};
+const DIETS=[['veg','Vegetarian','veg'],['egg','Veg + egg','egg'],['nonveg','Non-veg','nonveg'],['jain','Jain','jain'],['vegan','Vegan','vegan'],['other','Other','other']];
+const GOALS=()=>[['explore','Just exploring','explore'],['picky','Picky eating','picky'],['iron','Iron & nutrients','iron'],['lunchbox','Easier '+T().box+'es','lunchbox'],['labels','Reading labels','labels'],['first-foods','Starting solids','first-foods'],['sports','Sports & activity','sports'],['budget','Eating well on a budget','budget']];
+GOALMAP.explore=['balanced-plate','variety','meal-timing','snack-ideas'];
+function tg(id){let g=goals();if(id==='explore')g=g.includes('explore')?[]:['explore'];else{g=g.filter(x=>x!=='explore');g=g.includes(id)?g.filter(x=>x!==id):[...g,id]}SV('goals',g);render()}
+V.onboard=(step='1')=>{step=+step;const k=dkGet(),g=goals();
+ const dots=`<div class="dots" aria-label="Step ${step} of 3">${[1,2,3].map(i=>`<span class="${i<=step?'on':''}"></span>`).join('')}</div>`;
+ if(step===1)return`<div class="onb6">${dots}<div class="onbart">${plateArt(null)}</div><div class="brandmark">dabba<i>wise</i></div><h1>Good food for kids,<br>without the guesswork.</h1><p class="lede">Clear answers, real recipes and smart ${US()?'lunchbox':'dabba'} ideas — written by parents, checked against official sources.</p>
+ <p class="lbl">Where are you feeding kids?</p><div class="opt2">
+ <button class="opt big" onclick="SV('region','in');go('#/onboard/2')">${mini('in')}<span><b>India</b><small>Dabbas · Indian foods · ICMR-NIN, FSSAI, IAP</small></span></button>
+ <button class="opt big" onclick="SV('region','us');go('#/onboard/2')">${mini('us')}<span><b>United States</b><small>Lunchboxes · US foods · USDA, FDA, AAP, CDC</small></span></button></div>
+ <button class="link" onclick="SV('region',REG()||'in');SV('onboarded',1);go('#/today')">Skip — just browse</button></div>`;
+ if(step===2)return`<div class="onb6">${dots}<h1>Who’s at your table?</h1><p class="lede">Optional, and it never leaves this device. We use it to personalise Today, filter meals and flag allergens.</p>
+ ${k.map((c,i)=>`<fieldset class="card kidcard"><legend>${c.name?esc(c.name):'Child '+(i+1)}</legend>
+ <div class="frow"><label class="grow">Name or nickname<input value="${esc(c.name)}" oninput="dk(${i},'name',this.value)" placeholder="e.g. ${i?'Meera':'Aarav'}" autocomplete="off"${OBERR.some(x=>x[0]===i&&x[1]==='name')?' aria-invalid="true"':''}></label><label class="yrs">Age (years)<input type="number" inputmode="numeric" min="0" max="18" value="${c.years}" onchange="dk(${i},'years',this.value,1)" placeholder="—"></label></div>${err(i,'name')}${err(i,'years')}
+ <label>Age group<select onchange="dk(${i},'age',this.value)">${AGES.map(a=>`<option value="${a[0]}"${a[0]===c.age?' selected':''}>${a[1]}</option>`).join('')}</select></label>
+ <p class="lbl">Diet</p><div class="opts" role="radiogroup" aria-label="Diet">${DIETS.map(d=>`<button class="opt sm${c.diet===d[0]?' on':''}" role="radio" aria-checked="${c.diet===d[0]}" onclick="dk(${i},'diet',${c.diet===d[0]?"''":"'"+d[0]+"'"},1)">${mini(d[2])}<b>${d[1]}</b></button>`).join('')}</div>${c.diet==='other'?`<label>Tell us more (optional)<input value="${esc(c.dietOther)}" oninput="dk(${i},'dietOther',this.value)" placeholder="e.g. pescatarian, no onion-garlic"></label>`:''}${err(i,'diet')}
+ <p class="lbl">Food allergies</p><div class="chips wrap">${chip(c.noAllergy,(c.noAllergy?ic('check'):'')+'None',`dkA(${i},'none')`,'data-none')}${ALG.map(x=>chip(c.allergies.includes(x),x,`dkA(${i},'${x}')`)).join('')}</div>
+ ${c.noAllergy?'':`<label>Other allergies or intolerances<input value="${esc(c.allergyOther)}" oninput="dk(${i},'allergyOther',this.value)" placeholder="e.g. kiwi, mustard — comma separated"></label>`}${err(i,'alg')}
+ ${k.length>1||c.name?`<button class="link danger" onclick="dkDel(${i})">${k.length>1?'Remove this child':'Clear'}</button>`:''}</fieldset>`).join('')}
+ <button class="addk" onclick="dkAdd()">+ Add another child</button><div class="row end sticky"><button class="link" onclick="OBERR=[];go('#/onboard/3')">Skip for now</button><button class="pri" onclick="dkSave()">Continue</button></div></div>`;
+ return`<div class="onb6">${dots}<h1>What would help most?</h1><p class="lede">Pick as many as you like — Today will lean into them. Or just look around.</p><div class="opts goals">${GOALS().map(([id,l,mk])=>`<button class="opt${g.includes(id)?' on':''}" aria-pressed="${g.includes(id)}" onclick="tg('${id}')">${mini(mk==='explore'?'explore':'goals')}<b>${l}</b></button>`).join('')}</div>
+ <div class="row end"><button class="link" onclick="go('#/onboard/2')">Back</button><button class="pri" onclick="SV('onboarded',1);go('#/today');toast('You’re all set${firstName()?' — let’s feed '+esc(firstName()).replace(/'/g,'')+'!':''}')">${g.length?'Start using Dabbawise':'Skip & start'}</button></div></div>`};
+/* ---- EXPLORE ---- */
+V.explore=(sub,cat)=>{const cs=Object.keys(CATS);const sel=sub==='c'?cat:null;
+ if(sel){const list=ans().filter(a=>a.cat===sel);return crumbs([['Explore','#/explore'],[CATS[sel]]])+`<div class="banner">${catArt(sel,{w:640,h:160})}<div><h1>${CATS[sel]}</h1><p>${list.length} answers</p></div></div>${list.map(aCard).join('')||empty('search','Nothing here yet','Try another topic.')}`}
+ const myths=ans().filter(a=>a.cat==='myths');
+ return`<h1>Explore</h1><p class="lede">Every answer is short first, deep if you want it.</p><button class="searchbtn" onclick="openK()" aria-label="Search everything">${ic('search')}<span class="ph">Ask anything — ${US()?'juice boxes, nut-free lunch':'anda, paneer, tiffin'}</span><kbd>⌘K</kbd></button>
+ ${secH('Topics')}<div class="cgrid">${cs.map(c=>{const n=ans().filter(a=>a.cat===c).length;return`<a class="card tap ctile" href="#/explore/c/${c}">${catArt(c,{w:200,h:110})}<span class="cb"><b>${CATS[c]}</b><small>${n} answers</small></span></a>`}).join('')}</div>
+ ${secH('Myth vs fact','#/myths','All '+myths.length)}${carousel('Myths',myths.slice(0,8).map(mythFlip),'mc')}
+ ${secH('Learn step by step','#/guides')}${carousel('Guides',GUIDES.filter(g=>g.id!=='dabba'||!US()).map(guideCard),'gc')}
+ ${secH('Hear from the experts','#/experts')}${carousel('Experts',exps().slice(0,10).map(e=>`<a class="card tap xmini" href="#/x/${e.id}">${monogram(e)}<b>${esc(e.name)}</b><small class="mute clamp">${esc(e.role)}</small></a>`),'xc')}
+ <div class="grid2 xgrid">${[['#/tools','tools','Tools'],['#/saved','star','Saved']].map(x=>`<a class="card tap lcard" href="${x[0]}"><span class="ticon">${ic(x[1])}</span><b class="grow">${x[2]}</b>${ic('right')}</a>`).join('')}</div>`};
+V.myths=()=>crumbs([['Explore','#/explore'],['Myths']])+`<h1>Myth vs fact</h1><p class="lede">Tap a card to flip it. Every fact links to its sources.</p><div class="mgrid">${ans().filter(a=>a.cat==='myths').map(mythFlip).join('')}</div>`;
+V.guides=()=>crumbs([['Explore','#/explore'],['Guides']])+`<h1>Guides</h1><p class="lede">Short, step-by-step and calm. Progress saves as you go.</p><div class="ggrid">${GUIDES.map(guideCard).join('')}</div>`;
+const _x=V.experts;V.experts=(...a)=>_x(...a).replace(/<div class="av"[^<]*<\/div>/g,'').replace(/<a class="card tap([^"]*)" href="#\/x\/([\w-]+)">/g,(m,c,id)=>{const e=EXPERTS.find(x=>x.id===id);return e?`<a class="card tap xcard${c}" href="#/x/${id}">${monogram(e)}`:m});
+const _xx=V.x;V.x=id=>{const e=EXPERTS.find(x=>x.id===id);const h=_xx(id);return e?h.replace(/<div class="av[^"]*"[^<]*<\/div>/g,'').replace(/<h1>/,`<div class="xhero">${monogram(e)}</div><h1>`):h};
+/* ---- MEALS ---- */
+const _meals=V.meals;V.meals=()=>{const any=MS.type!=='all'||MS.diet!=='family'||MS.tag||MS.have.length;let h=_meals();
+ h=h.replace(/(<h1>[^<]*<\/h1>)/,`$1<p class="lede">${recs().length} kid-tested ideas, filtered for ${kids().length?esc(kids().map(k=>k.name).join(' & ')):'your family'}.</p>${any?`<button class="link clearall" onclick="MS={type:'all',diet:'family',tag:'',have:[]};render()">${ic('x')}Clear all filters</button>`:''}`);
+ return h.replace(/<option value="vegan"/,'$&')};
+const _ty=TYPES;
+/* ---- RECIPE ---- */
+let TMR={};
+function tmr(id,sec){const t=TMR[id];if(t&&t.iv){clearInterval(t.iv);TMR[id]=null;upT(id,sec);return}const end=Date.now()+sec*1000;TMR[id]={iv:setInterval(()=>{const left=Math.max(0,Math.round((end-Date.now())/1000));upT(id,left,sec);if(!left){clearInterval(TMR[id].iv);TMR[id]=null;toast('Timer done!');const b=document.getElementById(id);b&&b.classList.add('ding')}},250)};upT(id,sec,sec)}
+function upT(id,left,tot){const b=document.getElementById(id);if(!b)return;const run=!!(TMR[id]&&TMR[id].iv);b.querySelector('span').textContent=(run?'':'Start ')+Math.floor(left/60)+':'+String(left%60).padStart(2,'0');b.setAttribute('aria-pressed',run);b.style.setProperty('--p',tot?(1-left/tot):0)}
+V.r=id=>{const r=getR(id);if(!r)return empty('meal','Recipe not found','','<a class="btn" href="#/meals">All meals</a>');const f=fitFamily(r),al=recAllergens(r);const tl=TYPES().find(t=>t[0]===r.type);
+ return crumbs([['Meals','#/meals'],[r.name]])+`<article class="recipe6"><div class="rhero">${recipeArt(r,{w:320,h:170})}</div><div class="rhead6"><div class="meta">${r.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div><h1>${esc(r.name)}</h1>${r.intro?`<p class="lede">${esc(r.intro)}</p>`:''}
+ <div class="stats"><span><b>${r.mins||'0'}</b>min</span><span><b>${r.serves}</b>serves</span><span><b>${r.ing.length}</b>items</span><span><b>${r.steps.length}</b>steps</span></div></div>
+ ${f.flags.length?`<div class="note bad" role="alert">${ic('alert')} Allergen alert for ${esc(f.flags.join(', '))}</div>`:''}${kids().length&&!f.diet?`<div class="note warn">${ic('alert')} Doesn’t match a diet in your family profile.</div>`:''}${al.length?`<p class="small mute">Contains or may contain: ${al.join(', ')}. Always check your own ingredients.</p>`:''}
+ <div class="actions"><button onclick="toggleSave('r:${id}')">${ic('star',isSaved('r:'+id)?'i fill':'i')}${isSaved('r:'+id)?'Saved':'Save'}</button><button onclick="pickDay('${id}')">${ic('cal')}Add to week</button><button onclick='addShop(${JSON.stringify(r.ing).replace(/'/g,"&#39;")})'>${ic('cart')}Shopping list</button><button onclick="share('${esc(r.name).replace(/'/g,'')}')">${ic('share')}Share</button></div>
+ <div class="rcols"><section class="card ingc"><h2>You’ll need</h2><ul class="checks">${r.ing.map(i=>`<li><label><input type="checkbox"> ${esc(i)}</label></li>`).join('')}</ul></section>
+ <section><h2>Let’s cook</h2><ol class="steps6">${r.steps.map((s,i)=>{const m=s.match(/(\d+)(?:\s*[–-]\s*\d+)?\s*(min|minutes|mins)\b/i);const tid='t'+i;return`<li class="card step"><span class="sn">${i+1}</span><p>${esc(s)}</p>${m?`<button class="timer" id="${tid}" aria-pressed="false" onclick="tmr('${tid}',${+m[1]*60})">${ic('clock')}<span>Start ${m[1]}:00</span></button>`:''}</li>`}).join('')}</ol></section></div>
+ <div class="grid2"><div class="card tipc"><span class="kicker">Kid job</span><p>${esc(r.tip)}</p></div><div class="card"><span class="kicker">Storage & ${T().box}</span><p>${esc(r.store)}</p></div></div>
+ <p class="mute small">Recipe draft — adapt textures for your child’s age; see the <a href="#/tools/choke">Choking checker</a> for under-5s.</p></article>`};
+/* ---- LUNCHBOX with plate meter + smart suggestions ---- */
+const LBHIST=()=>LS('lbh_'+REG(),[]);
+function smartBox(){const o=LBO(),h=LBHIST().slice(-5),ks=kids();const ALx=ks.flatMap(k=>k.noAllergy?[]:(k.allergies||[]));const veg=ks.some(k=>['veg','jain','vegan'].includes(k.diet)),noegg=ks.some(k=>['veg','jain','vegan'].includes(k.diet));
+ const bad=x=>(ALx.includes('peanut')&&/peanut/i.test(x))||(ALx.includes('milk')&&/paneer|curd|cheese|yogurt|raita/i.test(x))||(ALx.includes('egg')||noegg)&&/egg/i.test(x)||veg&&/turkey|chicken/i.test(x)||ALx.includes('wheat/gluten')&&/paratha|roti|sandwich|wrap|bagel|pasta|tortilla/i.test(x)||ALx.includes('soy')&&/edamame/i.test(x)||ks.some(k=>k.diet==='vegan')&&/paneer|curd|cheese|yogurt/i.test(x);
+ Object.keys(LB).forEach(k=>{const used=h.map(b=>b[k]);let c=o[k].filter(x=>!bad(x)&&!used.includes(x)&&x!==LB[k]);if(!c.length)c=o[k].filter(x=>!bad(x)&&x!==LB[k]);if(!c.length)c=o[k];LB[k]=c[Math.floor(Math.random()*c.length)]});render();toast('Fresh combo — nothing repeated from your last 5')}
+function saveBox(){const b=LS('boxes_'+REG(),[]);b.push({...LB});SV('boxes_'+REG(),b);const h=LBHIST();h.push({...LB});SV('lbh_'+REG(),h.slice(-10));toast('Saved — we’ll avoid repeating it')}
+V.lunchbox=()=>{const o=LBO();const groups={grain:!!LB.main,protein:!!LB.protein,veg:!!LB.side,fruit:!!LB.fruit,dairy:/paneer|curd|cheese|yogurt/i.test(LB.protein)};const sc=Object.values(groups).filter(Boolean).length;const nut=/peanut|seed butter/i.test(LB.protein);
+ const msg=['An empty box — tap anything to start.','A start! Add a protein or veg next.','Getting there — two groups covered.','Good box. One more group makes it great.','Great balance. Add water and you’re set.','Perfect plate — all five groups!'][sc];
+ const rows={main:['Main (grain)','grain'],protein:['Protein','protein'],side:['Vegetable','veg'],fruit:['Fruit','fruit']};
+ return crumbs([['My Week','#/week'],[T().Box+' builder']])+`<h1>${T().Box} builder</h1><p class="lede">Pick one from each row and watch the plate fill up. Or let us suggest a combo you haven’t packed lately.</p>
+ <div class="card lbhero"><div class="pm">${platemeter(groups)}</div><div class="grow"><b class="pmsg">${msg}</b><div class="chips">${Object.entries(groups).map(([k,v])=>`<span class="tag gtag${v?' on':''}" style="--g:${G_COL[k]}">${v?'✓ ':''}${k}</span>`).join('')}</div>${nut&&US()?'<div class="note warn">Check your school’s nut/seed policy.</div>':''}
+ <div class="row"><button class="pri" onclick="smartBox()">${ic('shuffle')}Suggest a fresh combo</button>${sc?`<button class="link" onclick="Object.keys(LB).forEach(k=>LB[k]='');render()">${ic('x')}Clear</button>`:''}</div></div></div>
+ ${Object.entries(rows).map(([k,[l,g]])=>`<div class="sech"><h2 class="sec"><i class="gdot" style="background:${G_COL[g]}"></i>${l}</h2>${LB[k]?`<button class="link small" onclick="LB.${k}='';render()">None</button>`:''}</div><div class="chips wrap">${o[k].map(x=>chip(LB[k]===x,esc(x),`LB.${k}=LB.${k}==='${x}'?'':'${x}';render()`)).join('')}</div>`).join('')}
+ <div class="row end"><button class="pri" ${sc?'':'disabled aria-disabled="true"'} onclick="saveBox();render()">Save to rotation</button></div>
+ ${secH('Your '+T().box+' rotation')}${(LS('boxes_'+REG(),[])).map((b,i)=>`<div class="card row between box6"><span class="mini-pm">${platemeter({grain:!!b.main,protein:!!b.protein,veg:!!b.side,fruit:!!b.fruit,dairy:/paneer|curd|cheese|yogurt/i.test(b.protein||'')})}</span><span class="grow">${esc(Object.values(b).filter(Boolean).join(' + '))}</span><button class="ib" aria-label="Remove" onclick="rmBox(${i})">${ic('x')}</button></div>`).join('')||'<p class="mute">Nothing saved yet. Saved combos are skipped by “Suggest” so the week stays varied.</p>'}`};
+/* ---- HEAL tiles ---- */
+const _heal=V.heal;V.heal=(sub,id)=>{if(sub==='s'){const h=HEAL.find(x=>x.id===id);let out=_heal(sub,id);if(h)out=out.replace(/<h1>/,`<div class="banner heal mood-${h.id}">${healArt(h.id,{w:640,h:200})}</div><h1>`).replace('<p class="mute">What’s best to eat and drink.</p>',`<p class="lede">${esc(h.intro||'What’s best to eat and drink.')}</p>`);return out}
+ if(sub)return _heal(sub,id);const L=healList(),gs=[...new Set(L.map(h=>h.g))];
+ return`<div class="banner">${healArt('recovery',{w:640,h:180})}<div><h1>Foods that heal</h1><p>What’s best to eat and drink, and when.</p></div></div>${healSub('#/heal')}
+ ${gs.map(g=>`${secH(g)}<div class="hgrid">${L.filter(h=>h.g===g).map(healTile).join('')}</div>`).join('')}
+ <p class="small mute" style="margin-top:var(--s5)">Evidence labels: <span class="tag ev-G">Good evidence</span><span class="tag ev-S">Some evidence</span><span class="tag ev-T">Traditional, little evidence</span></p>`};
+/* guide intros */
+const _g=V.g;V.g=(id,st)=>{const g=GUIDES.find(x=>x.id===id);let h=_g(id,st);if(g&&(!st||st==='0'))h=h.replace(/<h1>([^<]*)<\/h1>/,`<div class="banner">${guideArt(g.id,{w:640,h:160})}</div><h1>$1</h1><p class="lede">${esc(g.intro)}</p>`);return h};
+/* copy polish on settings kid list & diet labels */
+const _set=V.settings;V.settings=()=>_set().replace(/>Vegetarian \+ egg</g,'>Veg + egg<');
+if(typeof FOODS==='undefined')render();
