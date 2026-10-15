@@ -40,6 +40,6 @@ function build(){
  const footer=total?'<div class="dw-week-footer"><p>Check allergens, school food rules, storage temperatures and age-appropriate textures before serving.</p><button onclick="weekToShop()">🛒 Add week to shopping list</button></div>':'<p class="dw-week-empty">Start with <button onclick="window.dwOpenMealPlanner()">Generate my meal plan</button>, then adjust any day.</p>';
  return hero+actions+tabs+timetable(p)+cards+footer;
 }
-function init(){if(typeof V==='undefined')return;V.week=build}
+function init(){if(typeof V==='undefined')return;V.week=build;if(location.hash.indexOf('#/week')===0)render()}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
