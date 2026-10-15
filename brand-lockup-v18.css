@@ -1,0 +1,8 @@
+/* Parent Kitchen logo lockup: symbol and full name always together. */
+.tpk-brand-lockup{display:inline-flex;align-items:center;gap:8px;max-width:100%;white-space:nowrap}
+.tpk-brand-bowl{display:inline-flex;align-items:center;justify-content:center;flex:none;width:39px;height:39px}
+.tpk-brand-bowl svg{display:block;width:100%;height:100%}
+.tpk-brand-lockup .tpk-wordmark{display:inline-block;font-size:20px;line-height:1.05;font-weight:730;letter-spacing:-.055em;color:#245a44}
+.side .logo .tpk-brand-lockup .tpk-wordmark{font-size:19px}
+.top .logo .tpk-brand-lockup .tpk-wordmark{font-size:18px}
+@media(max-width:390px){.top .logo .tpk-brand-lockup .tpk-wordmark{font-size:15px}.top .logo .tpk-brand-bowl{width:30px;height:30px}.tpk-brand-lockup{gap:5px}}
