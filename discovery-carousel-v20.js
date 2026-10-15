@@ -57,6 +57,7 @@ function init(){
  }
  const main=document.getElementById('main');
  if(main){new MutationObserver(()=>{if(location.hash==='#/today'||location.hash===''||location.hash==='#/'){setup()}else stop()}).observe(main,{childList:true})}
+ if((location.hash==='#/today'||location.hash===''||location.hash==='#/')&&!document.getElementById('tpk-tour')&&typeof render==='function')render();
  setup();
  addEventListener('visibilitychange',()=>{document.hidden?stop():start()});
  installNavHints();
