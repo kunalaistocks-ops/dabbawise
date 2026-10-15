@@ -1,0 +1,16 @@
+/* V22: mobile brand buckets and swipe affordance */
+.tpk-tour-slide{touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.tpk-tour-copy a,.tpk-tour-controls button{user-select:auto;-webkit-user-select:auto}
+@media(max-width:1023px){
+ .side .logo,.side>a.logo{display:none!important}
+ .side{padding-top:0!important;gap:0!important}
+ .tabs a[data-t="explore"],.tabs a[data-t="meals"],.tabs .tpk-mobile-hidden,#tpk-mobile-more{display:none!important}
+ .tabs a[data-t="today"],.tabs a[data-t="week"],.tabs a[data-t="heal"],.tabs .tpk-main-truth,.tabs .tpk-main-community{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;min-width:0!important;padding:5px 1px!important;gap:3px!important;background:transparent!important}
+ .tabs .tpk-main-community{color:#945137!important}
+ .tabs .tpk-main-truth{color:#276d4b!important}
+ .tabs a[data-t="today"][aria-current="page"],.tabs a[data-t="week"][aria-current="page"],.tabs a[data-t="heal"][aria-current="page"]{background:#e6f6ed!important}
+ .tabs .tpk-primary-tab span{font-size:10px!important;line-height:1.15!important;white-space:normal!important;text-align:center!important}
+ .tabs .tpk-tab-icon{font-size:20px!important}
+ .tpk-tour-controls button{min-width:42px!important;min-height:42px!important}
+}
+@media(max-width:390px){.tabs a span{font-size:9px!important}.tabs .tpk-primary-tab span{font-size:9px!important}}
