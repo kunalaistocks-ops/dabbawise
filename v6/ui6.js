@@ -59,7 +59,7 @@ V.today=()=>{const ks=kids(),g=goals(),m=moment(),meal=pickToday(),hr=new Date()
  ${secH('Tools')}<div class="grid2 tools6">${[['#/lunchbox','box',T().Box+' builder','Balance in five taps'],['#/tools/label','scan','Label decoder','Paste ingredients'],['#/tools/choke','shield','Choking checker','Safe shapes by age'],['#/myths','leaf','Myth vs fact','Flip the cards']].map((x,i)=>`<a class="card tap tool6 t${i}" href="${x[0]}"><span class="ticon">${ic(x[1])}</span><b>${x[2]}</b><small>${x[3]}</small></a>`).join('')}</div>`};
 /* ---- ONBOARDING ---- */
 const NEWK=()=>({name:'',years:'',age:'4-8y',diet:'',dietOther:'',allergies:[],noAllergy:false,allergyOther:''});
-const dkGet=()=>LS('draftKids',kids().length?kids():[NEWK()]);
+const dkGet=()=>{const draft=LS('draftKids',null);const existing=kids();const source=Array.isArray(draft)&&draft.length?draft:(Array.isArray(existing)&&existing.length?existing:[NEWK()]);return source.map(c=>({...NEWK(),...(c&&typeof c==='object'?c:{}),name:String(c?.name||''),allergies:Array.isArray(c?.allergies)?c.allergies:[]}))};
 function dk(i,f,v,re){const k=dkGet();k[i][f]=v;if(f==='years'){const y=+v;if(v!=='')k[i].age=y<1?'6-12m':y<4?'1-3y':y<9?'4-8y':y<14?'9-13y':'teens'}SV('draftKids',k);if(re)render()}
 function dkA(i,x){const k=dkGet(),c=k[i];if(x==='none'){c.noAllergy=!c.noAllergy;if(c.noAllergy){c.allergies=[];c.allergyOther=''}}else{c.noAllergy=false;c.allergies=c.allergies.includes(x)?c.allergies.filter(y=>y!==x):[...c.allergies,x]}SV('draftKids',k);render()}
 function dkAdd(){const k=dkGet();k.push(NEWK());SV('draftKids',k);render()}
@@ -73,7 +73,7 @@ const DIETS=[['veg','Vegetarian','veg'],['egg','Veg + egg','egg'],['nonveg','Non
 const GOALS=()=>[['explore','Just exploring','explore'],['picky','Picky eating','picky'],['iron','Iron & nutrients','iron'],['lunchbox','Easier '+T().box+'es','lunchbox'],['labels','Reading labels','labels'],['first-foods','Starting solids','first-foods'],['sports','Sports & activity','sports'],['budget','Eating well on a budget','budget']];
 GOALMAP.explore=['balanced-plate','variety','meal-timing','snack-ideas'];
 function tg(id){let g=goals();if(id==='explore')g=g.includes('explore')?[]:['explore'];else{g=g.filter(x=>x!=='explore');g=g.includes(id)?g.filter(x=>x!==id):[...g,id]}SV('goals',g);render()}
-V.onboard=(step='1')=>{step=+step;const k=dkGet(),g=goals();
+V.onboard=(step='1')=>{step=+step;const k=dkGet(),rawGoals=goals(),g=Array.isArray(rawGoals)?rawGoals:[];
  const dots=`<div class="dots" aria-label="Step ${step} of 3">${[1,2,3].map(i=>`<span class="${i<=step?'on':''}"></span>`).join('')}</div>`;
  if(step===1)return`<div class="onb6">${dots}<div class="onbart">${plateArt(null)}</div><div class="brandmark">dabba<i>wise</i></div><h1>Good food for kids,<br>without the guesswork.</h1><p class="lede">Clear answers, real recipes and smart ${US()?'lunchbox':'dabba'} ideas — written by parents, checked against official sources.</p>
  <p class="lbl">Where are you feeding kids?</p><div class="opt2">
