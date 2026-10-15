@@ -48,6 +48,7 @@ function generate(form,wrap){
    if(!next[day].includes(r.id)){next[day].push(r.id);added++}
    usage[r.id]=(usage[r.id]||0)+1;
   }
+  if(d.meals==='all'&&d.schoolDays&&i<5&&d.schoolSnack&&d.schoolEnd&&pools.snack?.length>1){const extra=pools.snack.find(r=>!next[day].includes(r.id));if(extra){next[day].push(extra.id);added++;}}
  }
  if(!added){wrap.querySelector('#dw-plan-feedback').textContent='Your selected meals are already in this plan. Choose Replace to generate again.';return}
  localStorage.setItem(key,JSON.stringify(next));
