@@ -1,0 +1,11 @@
+#usda-open{position:fixed;top:9px;right:253px;z-index:45;min-height:42px;padding:8px 12px;border:1px solid #d9e9dd;border-radius:999px;background:#fff7e8;color:#80591b;font-weight:750;font-size:12px}
+#usda-overlay{position:fixed;inset:0;z-index:210;background:#1133279c;display:grid;place-items:center;padding:14px;overflow:auto}
+.usda-modal{position:relative;background:#fff;color:#17392b;border-radius:24px;padding:26px;width:min(630px,100%);max-height:92vh;overflow:auto;box-shadow:0 20px 70px #142a2250}
+.usda-modal h2{font-size:25px;margin:0 35px 8px 0}.usda-modal p{font-size:14px;color:#65786c}
+.usda-close{position:absolute;top:12px;right:14px;border:0;background:#edf7ed;width:38px;height:38px;min-height:38px;padding:0;border-radius:50%;font-size:25px}
+.usda-search{display:flex;gap:8px}.usda-search input{flex:1;min-width:0}.usda-search button{background:#14865d;color:white;border:0;border-radius:12px}
+#usda-status{color:#176f4b;min-height:20px;font-weight:600}
+.usda-result{border:1px solid #e3eee5;border-radius:16px;padding:15px;margin:10px 0;background:#fbfdfa}.usda-result h3{margin:0;font-size:17px}
+.usda-source{font-size:12px!important}.usda-nutrients{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;font-size:13px;margin:9px 0}.usda-result a{font-size:13px;font-weight:700}
+.usda-disclaimer{font-size:12px!important;border-top:1px solid #e4eee5;padding-top:12px}
+@media(max-width:600px){#usda-open{top:auto;bottom:calc(75px + env(safe-area-inset-bottom));right:12px;box-shadow:0 3px 16px #174e2d22}.usda-modal{padding:20px}.usda-search{flex-direction:column}.usda-nutrients{grid-template-columns:1fr 1fr}}
