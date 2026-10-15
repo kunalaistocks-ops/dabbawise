@@ -27,7 +27,7 @@ async function preview(button){try{const {data,error}=await client().storage.fro
 async function decide(button){
  const card=button.closest('[data-id]');if(!card)return;
  const status=button.dataset.action,note=card.querySelector('textarea').value.trim();
- if(status==='rejected'&&!note){message('Please enter a reason before rejecting.');return}
+ if(status==='rejected'&&!note){message('Please enter a reason before rejecting.');return}const recipe=pending.find(r=>r.id===card.dataset.id);if(status==='published'&&recipe?.private_photo_path){message('This recipe includes a private photo. The photo will remain private; only the recipe text will be published.');}
  if(!confirm(status==='published'?'Publish this parent recipe publicly?':'Reject this recipe and keep it out of the public feed?'))return;
  card.querySelectorAll('button').forEach(b=>b.disabled=true);
  try{
