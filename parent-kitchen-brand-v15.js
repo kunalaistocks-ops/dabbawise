@@ -5,9 +5,27 @@ const logo='<span class="tpk-wordmark">the parent kitchen<span class="tpk-dot">.
 function rebrand(){
  document.querySelectorAll('a.logo').forEach(a=>{a.innerHTML=logo;a.setAttribute('aria-label','The Parent Kitchen — home')});
  const nav=document.querySelector('.sidex');
- if(nav&&!nav.querySelector('.tpk-home-link')){const a=document.createElement('a');a.href='#/today';a.className='tpk-home-link';a.textContent='⌂ What can I do here?';nav.prepend(a)}
- if(nav&&!nav.querySelector('.tpk-nav-heading')){
-  const head=document.createElement('div');head.className='tpk-nav-heading';head.textContent='THE PARENT KITCHEN';nav.prepend(head);
+ if(nav){
+   nav.querySelectorAll('.dw-food-truth-nav,.dw-parent-nav,.dw-plan-nav,.dw-day-nav,.tpk-nav-heading,.tpk-home-link').forEach(el=>el.remove());
+   if(!nav.querySelector('.tpk-home-link')){
+     const a=document.createElement('a');a.href='#/today';a.className='tpk-home-link';a.textContent='⌂ See all options';nav.prepend(a);
+   }
+ }
+ const tabs=document.querySelector('.tabs');
+ if(tabs){
+   tabs.querySelectorAll('.dw-extra-tab').forEach(el=>el.remove());
+   const rename={'explore':'Foodpedia','meals':'Recipes','heal':'Grow Well','week':'Meal Planner'};
+   tabs.querySelectorAll('a[data-t]').forEach(a=>{
+      const label=a.querySelector('span');const key=a.dataset.t;
+      if(label&&rename[key])label.textContent=rename[key];
+   });
+   if(!tabs.querySelector('.tpk-main-truth')){
+     for(const [url,icon,label,cls] of [['#/food-truth','♧','Food Truths','tpk-main-truth'],['#/parent-kitchen','♥','Cook Together','tpk-main-community']]){
+       const a=document.createElement('a');a.href=url;a.className='tpk-primary-tab '+cls;
+       a.innerHTML='<span class="tpk-tab-icon">'+icon+'</span><span>'+label+'</span>';
+       tabs.appendChild(a);
+     }
+   }
  }
 }
 function homePanel(){
