@@ -21,6 +21,9 @@ function openPlanner(){
 function generate(form,wrap){
  const d=Object.fromEntries(new FormData(form).entries());d.replace=form.elements.replace.checked;
  const target=d.cuisine==='western'?'us':d.cuisine==='indian'?'in':null;const maxMinutes=120;d.schoolDays=form.elements.schoolDays.checked;
+ if(d.schoolStart&&d.schoolEnd&&d.schoolEnd<=d.schoolStart){wrap.querySelector('#dw-plan-feedback').textContent='School end time must be later than school start time.';return}
+ if(d.schoolSnack&&d.schoolLunch&&d.schoolSnack>=d.schoolLunch){wrap.querySelector('#dw-plan-feedback').textContent='Morning snack break should be before lunch break.';return}
+ for(const t of ['schoolSnack','schoolLunch']){if(d[t]&&d.schoolStart&&d[t]<=d.schoolStart||d[t]&&d.schoolEnd&&d[t]>=d.schoolEnd){wrap.querySelector('#dw-plan-feedback').textContent='School snack and lunch breaks should fall within school hours.';return}}
  const avoid=d.avoid.toLowerCase().split(/[,;]+/).map(x=>x.trim()).filter(Boolean);
  const family=typeof kids==='function'?kids():[];const hasYoungChild=family.some(k=>{const age=Number(k.years);return Number.isFinite(age)&&k.years!==''?age<5:['6-12m','1-3y'].includes(k.age)});
  const recipes=(typeof RECIPES!=='undefined'?RECIPES:[]);
