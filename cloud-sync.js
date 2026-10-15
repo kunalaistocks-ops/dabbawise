@@ -4,7 +4,9 @@
 const URL='https://iyabdhmvbtlhxntzafth.supabase.co';
 const KEY='sb_publishable_CFrNt-ICIUYv9culGxLI8w_JoJQFHdp';
 const PREFIX='dw2_';
-const ALLOWED=['region','kids','goals','saved','onboarded','units'];\nconst INCLUDED_PREFIXES=['plan_','boxes_','shop_','done_'];\nconst allowed=k=>ALLOWED.includes(k)||INCLUDED_PREFIXES.some(p=>k.startsWith(p));
+const ALLOWED=['region','kids','goals','saved','onboarded','units'];
+const INCLUDED_PREFIXES=['plan_','boxes_','shop_','done_'];
+const allowed=k=>ALLOWED.includes(k)||INCLUDED_PREFIXES.some(p=>k.startsWith(p));
 let sb=null;
 function client(){if(!window.supabase?.createClient)throw Error('Cloud library could not load');return sb||(sb=window.supabase.createClient(URL,KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}}))}
 async function currentUser(){const {data,error}=await client().auth.getUser();if(error)throw error;return data.user}
