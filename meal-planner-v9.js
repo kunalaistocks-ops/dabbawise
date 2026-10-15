@@ -9,29 +9,29 @@ function openPlanner(){
  document.getElementById('dw-plan-overlay')?.remove();
  const p=read();
  const wrap=document.createElement('div');wrap.id='dw-plan-overlay';
- wrap.innerHTML='<section class="dw-plan-dialog" role="dialog" aria-modal="true" aria-labelledby="dw-plan-title"><button class="dw-plan-close" aria-label="Close">×</button><div class="dw-plan-kicker">YOUR FAMILY · YOUR FOOD</div><h2 id="dw-plan-title">Build your week in seconds</h2><p>Choose what your family enjoys. We’ll suggest a week of recipes that you can swap, edit and add to your shopping list.</p><form id="dw-plan-form"><div class="dw-plan-fields"><label>Food style<select name="cuisine"><option value="western">Western / American</option><option value="indian">Indian</option><option value="mixed">Mix of both</option></select></label><label>Diet<select name="diet"><option value="family">Use family preferences</option><option value="veg">Vegetarian</option><option value="egg">Vegetarian + eggs</option><option value="nonveg">Includes meat and fish</option></select></label><label>Cooking time<select name="minutes"><option value="15">Up to 15 minutes</option><option value="30">Up to 30 minutes</option><option value="45">Up to 45 minutes</option><option value="90">Any cooking time</option></select></label><label>Plan length<select name="days"><option value="3">3 days</option><option value="5">5 days</option><option value="7">7 days</option></select></label><label>Focus<select name="focus"><option value="variety">Balanced variety</option><option value="quick">Quick and practical</option><option value="familiar">Familiar favourites</option></select></label><label>Meals<select name="meals"><option value="all">All four meal occasions</option><option value="lunchbox">School lunchbox / dabba</option><option value="dinner">Dinner only</option><option value="breakfast">Breakfast only</option></select></label></div><label>Ingredients to avoid (optional)<input name="avoid" placeholder="e.g. mushroom, spinach" maxlength="180"></label><label class="dw-plan-check"><input type="checkbox" name="replace" checked> Replace the current plan</label><div class="dw-plan-safety">Recipe screening is approximate, not an allergy-safe certification. Check ingredients, substitutions, labels and cross-contact yourself. No nutritional targets are calculated in this beta.</div><div class="dw-plan-actions"><button type="button" class="dw-plan-cancel">Cancel</button><button type="submit" class="dw-plan-submit">✨ Generate my meal plan</button></div><p id="dw-plan-feedback" role="status" aria-live="polite"></p></form></section>';
+ wrap.innerHTML='<section class="dw-plan-dialog" role="dialog" aria-modal="true" aria-labelledby="dw-plan-title"><button class="dw-plan-close" aria-label="Close">×</button><div class="dw-plan-kicker">YOUR FAMILY · YOUR FOOD</div><h2 id="dw-plan-title">Build your week in seconds</h2><p>Choose what your family enjoys. We’ll suggest a week of recipes that you can swap, edit and add to your shopping list.</p><form id="dw-plan-form"><div class="dw-plan-fields"><label>Food style<select name="cuisine"><option value="mixed">Indo-Western (mix of both)</option><option value="western">Western / American</option><option value="indian">Indian</option></select></label><label>Diet<select name="diet"><option value="family">Use family preferences</option><option value="veg">Vegetarian</option><option value="egg">Vegetarian + eggs</option><option value="nonveg">Includes meat and fish</option></select></label><label>Plan length<select name="days"><option value="3">3 days</option><option value="5">5 days</option><option value="7">7 days</option></select></label><label>Focus<select name="focus"><option value="variety">Balanced variety</option><option value="quick">Quick and practical</option><option value="familiar">Familiar favourites</option></select></label><label>Meals<select name="meals"><option value="all">All four meal occasions</option><option value="lunchbox">School lunchbox / dabba</option><option value="dinner">Dinner only</option><option value="breakfast">Breakfast only</option></select></label></div><label>Ingredients to avoid (optional)<input name="avoid" placeholder="e.g. mushroom, spinach" maxlength="180"></label><fieldset class="dw-school"><legend>🏫 School-day schedule (optional)</legend><p>Add the times your child is at school. We will organise the school lunchbox and snacks around them.</p><div class="dw-plan-fields"><label>School starts<input type="time" name="schoolStart"></label><label>Morning snack break<input type="time" name="schoolSnack"></label><label>School lunch break<input type="time" name="schoolLunch"></label><label>School ends<input type="time" name="schoolEnd"></label></div><label class="dw-plan-check"><input type="checkbox" name="schoolDays" checked> Apply to Monday–Friday</label></fieldset><label class="dw-plan-check"><input type="checkbox" name="replace" checked> Replace the current plan</label><div class="dw-plan-safety">Recipe screening is approximate, not an allergy-safe certification. Check ingredients, substitutions, labels and cross-contact yourself. No nutritional targets are calculated in this beta.</div><div class="dw-plan-actions"><button type="button" class="dw-plan-cancel">Cancel</button><button type="submit" class="dw-plan-submit">✨ Generate my meal plan</button></div><p id="dw-plan-feedback" role="status" aria-live="polite"></p></form></section>';
  document.body.appendChild(wrap);
  wrap.querySelector('.dw-plan-close').onclick=()=>wrap.remove();
  wrap.querySelector('.dw-plan-cancel').onclick=()=>wrap.remove();
  wrap.onclick=e=>{if(e.target===wrap)wrap.remove()};
  const form=wrap.querySelector('form');
- for(const [k,v] of Object.entries(p)){if(form.elements[k]&&k!=='replace')form.elements[k].value=v}
+ for(const [k,v] of Object.entries(p)){if(form.elements[k]&&k!=='replace'&&k!=='schoolDays')form.elements[k].value=v}if(typeof p.schoolDays==='boolean')form.elements.schoolDays.checked=p.schoolDays
  form.onsubmit=e=>{e.preventDefault();generate(form,wrap)};
 }
 function generate(form,wrap){
  const d=Object.fromEntries(new FormData(form).entries());d.replace=form.elements.replace.checked;
- const target=d.cuisine==='western'?'us':d.cuisine==='indian'?'in':null;
+ const target=d.cuisine==='western'?'us':d.cuisine==='indian'?'in':null;const maxMinutes=120;d.schoolDays=form.elements.schoolDays.checked;
  const avoid=d.avoid.toLowerCase().split(/[,;]+/).map(x=>x.trim()).filter(Boolean);
- const family=typeof kids==='function'?kids():[];
+ const family=typeof kids==='function'?kids():[];const hasYoungChild=family.some(k=>{const age=Number(k.years);return Number.isFinite(age)&&k.years!==''?age<5:['6-12m','1-3y'].includes(k.age)});
  const recipes=(typeof RECIPES!=='undefined'?RECIPES:[]);
  const slots=d.meals==='all'?categories:[d.meals];
  const pools={};
  for(const slot of slots){
-  pools[slot]=recipes.filter(r=>(!target||r.r===target)&&r.type===slot&&r.mins<=Number(d.minutes)
+  pools[slot]=recipes.filter(r=>(!target||r.r===target)&&r.type===slot&&r.mins<=maxMinutes
     &&(d.diet==='family'?fitFamily(r).ok:dietOK(r,d.diet))
     &&!avoid.some(x=>(r.ing||[]).join(' ').toLowerCase().includes(x))
-    &&!family.some(k=>(k.allergies||[]).some(a=>recAllergens(r).includes(a))));
-  if(!pools[slot].length){wrap.querySelector('#dw-plan-feedback').textContent='Not enough '+slot+' recipes match. Try a longer cooking time, mixed cuisine, or fewer exclusions.';return}
+    &&!family.some(k=>(k.allergies||[]).some(a=>recAllergens(r).includes(a)))&&!(hasYoungChild&&/olive|whole nut/i.test(r.name)));
+  if(!pools[slot].length){wrap.querySelector('#dw-plan-feedback').textContent='Not enough '+slot+' recipes match. Try a different food style, diet, or fewer exclusions.';return}
  }
  const key='dw2_plan_'+(typeof REG==='function'?REG():'in');
  let previous={};try{previous=JSON.parse(localStorage.getItem(key)||'{}')||{}}catch{}
@@ -41,7 +41,7 @@ function generate(form,wrap){
   const day=DAYS[i];next[day]=next[day]||[];
   for(const slot of slots){
    const candidates=pools[slot].slice().sort((a,b)=>{
-    const score=r=>(usage[r.id]||0)*20+(d.focus==='quick'?r.mins:0)+(d.focus==='familiar'?Math.max(0,r.mins-20):0);
+    const score=r=>(usage[r.id]||0)*20+(d.focus==='quick'?r.mins:0)+(d.focus==='familiar'?Math.max(0,r.mins-20):0)+(d.cuisine==='mixed'&&r.r!==(i%2?'in':'us')?8:0);
     return score(a)-score(b)||a.name.localeCompare(b.name);
    });
    const r=candidates[(i+categories.indexOf(slot))%Math.min(candidates.length,Math.max(1,Math.ceil(candidates.length/2)))];
@@ -51,7 +51,7 @@ function generate(form,wrap){
  }
  if(!added){wrap.querySelector('#dw-plan-feedback').textContent='Your selected meals are already in this plan. Choose Replace to generate again.';return}
  localStorage.setItem(key,JSON.stringify(next));
- localStorage.setItem(PREF_KEY,JSON.stringify({cuisine:d.cuisine,diet:d.diet,minutes:d.minutes,days:d.days,focus:d.focus,meals:d.meals,avoid:d.avoid}));
+ localStorage.setItem(PREF_KEY,JSON.stringify({cuisine:d.cuisine,diet:d.diet,days:d.days,focus:d.focus,meals:d.meals,avoid:d.avoid,schoolStart:d.schoolStart,schoolSnack:d.schoolSnack,schoolLunch:d.schoolLunch,schoolEnd:d.schoolEnd,schoolDays:d.schoolDays}));
  wrap.remove();
  if(typeof toast==='function')toast('Generated '+added+' meal ideas. Review and edit your week.');
  if(typeof render==='function')render();
@@ -60,7 +60,7 @@ function decorate(){
  if(typeof V==='undefined'||!V.week||V.week.__dwPlanV9)return;
  const original=V.week;
  V.week=function(...args){let h=original(...args);
- const panel='<section class="dw-planner-hero"><div><span class="dw-plan-kicker">MEAL PLANNER</span><h2>A whole week, made easier.</h2><p>Western, Indian or a mix. Choose your preferences and get an editable meal plan in seconds.</p><button class="dw-plan-main" onclick="window.dwOpenMealPlanner()">✨ Generate my weekly meal plan →</button></div><div class="dw-plan-emoji" aria-hidden="true">🥗</div></section>';
+ const panel='<section class="dw-planner-hero"><div><span class="dw-plan-kicker">MEAL PLANNER</span><h2>A whole week, made easier.</h2><p>Western, Indian or Indo-Western. Add school times and generate an editable week of meals and snacks. Preparation times are shown with each recipe.</p><button class="dw-plan-main" onclick="window.dwOpenMealPlanner()">✨ Generate my weekly meal plan →</button></div><div class="dw-plan-emoji" aria-hidden="true">🥗</div></section>';
  h=h.replace(/<div class="row between"><h1>My Week<\/h1>/,'<div class="row between"><h1>My Week</h1>');
  return panel+h.replace(/onclick="autoWeek\(\)"/g,'onclick="window.dwOpenMealPlanner()"').replace(/>Auto-plan</g,'>Plan with preferences</');
  };
