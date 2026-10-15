@@ -1,0 +1,39 @@
+/* Layout corrections: navigation, no clipping, and readable primary actions. */
+@media(min-width:1024px){
+ .side{overflow-y:auto!important;overscroll-behavior:contain;gap:15px!important;padding:18px 12px!important}
+ .side .logo{margin:0 0 8px!important;padding:8px 7px 14px!important}
+ .tabs{flex:0 0 auto!important;gap:5px!important}
+ .tabs a{min-height:44px!important;font-size:14px!important;padding:9px 12px!important}
+ .sidex{display:flex!important;flex-direction:column!important;gap:4px!important;padding:10px 0 18px!important}
+ .sidex>a{margin:0!important;padding:10px 12px!important;min-height:39px!important;background:transparent!important;border-radius:11px!important;font-size:13px!important;color:#5b7463!important;font-weight:650!important}
+ .sidex>a.tpk-home-link{background:#eaf6ec!important;color:#1c6e4b!important;font-weight:800!important}
+ .sidex>a[href="#/more"]{display:none!important}
+ .tabs .tpk-primary-tab{display:flex!important;align-items:center;gap:12px;border-radius:12px}
+ .tabs .tpk-main-truth{background:#eaf6ee!important;color:#226b4b!important}
+ .tabs .tpk-main-community{background:#fff0e8!important;color:#945237!important}
+ .tpk-tab-icon{width:23px;text-align:center;font-size:19px}
+}
+@media(max-width:1023px){
+ .tabs .tpk-primary-tab{display:none!important}
+ .side .tabs{grid-template-columns:repeat(5,minmax(0,1fr))!important}
+}
+#tpk-utility{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 20px;background:#fbfdfa;border-bottom:1px solid #e4eee6;position:relative;z-index:15;min-height:56px}
+#tpk-utility #usda-open,#tpk-utility #dw-sync-btn,#tpk-utility #dw-account-btn{position:static!important;top:auto!important;bottom:auto!important;right:auto!important;left:auto!important;z-index:auto!important;min-height:38px!important;max-width:none!important;display:inline-flex!important;align-items:center;justify-content:center;font-size:12px!important;padding:8px 13px!important;box-shadow:none!important;margin:0!important}
+#tpk-utility #dw-account-btn{margin-left:auto!important}
+#main{padding-top:22px!important}
+.tpk-quick-nav{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 22px;padding:11px 0;border-bottom:1px solid #e4eee5}
+.tpk-quick-nav a{display:inline-flex;align-items:center;justify-content:center;background:#f0f7f1;border:1px solid #e1eee4;border-radius:999px;padding:9px 12px;min-height:40px;color:#266c4b;font-size:12px;font-weight:750}
+.tpk-quick-nav a:hover{background:#e1f2e7}
+.tpk-start{margin-top:0!important}
+.tpk-start-top{padding:19px 22px!important}
+.tpk-start-grid>a{min-height:155px}
+.dw-nutri-chip{font-size:11px!important;line-height:1.3!important;white-space:normal!important}
+@media(max-width:650px){
+ #tpk-utility{padding:8px 12px;gap:6px}
+ #tpk-utility #usda-open,#tpk-utility #dw-sync-btn,#tpk-utility #dw-account-btn{font-size:11px!important;padding:7px 9px!important;min-height:36px!important}
+ #tpk-utility #dw-account-btn{margin-left:0!important}
+ .tpk-quick-nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+ .tpk-quick-nav a{padding:8px 7px;font-size:11px}
+ #main{padding-top:14px!important}
+ .tpk-start-grid>a{min-height:0}
+}
