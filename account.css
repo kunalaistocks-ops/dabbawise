@@ -1,0 +1,13 @@
+#dw-account-btn{position:fixed;top:9px;right:12px;z-index:45;background:#fff;color:#16684a;border:1px solid #d8e9dc;border-radius:999px;padding:9px 13px;min-height:42px;box-shadow:0 3px 14px #16492c14;font-size:13px;font-weight:750;max-width:145px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#dw-auth-overlay{position:fixed;inset:0;z-index:200;background:#12382d9c;display:grid;place-items:center;padding:15px;overflow-y:auto}
+.dw-auth-dialog{position:relative;background:#fff;color:#19372b;border-radius:25px;width:min(440px,100%);padding:28px;box-shadow:0 25px 80px #0b2b2250}
+.dw-auth-dialog h2{font-size:26px;margin:8px 0}.dw-auth-dialog p{color:#60766a;font-size:14px;line-height:1.5}.dw-auth-brand{font-size:20px;font-weight:850;color:#177b53}
+.dw-auth-close{position:absolute;right:15px;top:12px;background:#f0f6f0;border:0;border-radius:50%;font-size:25px;width:38px;height:38px;min-height:38px;padding:0}
+.dw-google,.dw-submit{width:100%;border-radius:13px;min-height:48px;margin:9px 0;font-weight:750}
+.dw-google{background:#fff;color:#26372e;border:1px solid #d6e2d8}.dw-g{font-size:22px;font-weight:900;color:#4285f4}
+.dw-submit{background:#16865e;color:#fff;border:0}.dw-or{text-align:center;color:#84958b;font-size:12px;margin:15px 0}
+.dw-auth-dialog label{display:block;margin:8px 0 4px}.dw-auth-dialog input{width:100%;min-height:48px;border-radius:12px}
+.dw-guest{width:100%;background:transparent;border:0;color:#16734f;font-weight:750;margin:10px 0}
+.dw-privacy{font-size:11px!important;border-top:1px solid #e8eee9;padding-top:13px}
+#dw-auth-status{color:#286949;min-height:18px}
+@media(max-width:600px){#dw-account-btn{top:10px;right:10px;max-width:110px;font-size:11px;padding:8px}.dw-auth-dialog{padding:22px}}
