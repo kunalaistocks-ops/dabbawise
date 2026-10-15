@@ -1,0 +1,18 @@
+/* Parent privacy centre: local data controls and authenticated deletion requests. */
+(function(){
+'use strict';
+const URL='https://iyabdhmvbtlhxntzafth.supabase.co',KEY='sb_publishable_CFrNt-ICIUYv9culGxLI8w_JoJQFHdp';
+const client=()=>window.__dwSupabaseClient||(window.__dwSupabaseClient=window.supabase.createClient(URL,KEY));
+function page(){return '<section class="tpk-privacy-center"><span class="tpk-pc-kicker">MY FAMILY · PRIVACY</span><h1>Your family data, your choices.</h1><p>See what is saved locally, download a copy of browser preferences, or request deletion of your account. Cloud deletion is not automatic.</p><div class="tpk-pc-grid"><article><h2>On this device</h2><p>Export the data saved by this browser. This does not include cloud data or other devices.</p><button id="tpk-export-local">Download browser data</button><button id="tpk-clear-local" class="tpk-pc-secondary">Clear browser data</button></article><article><h2>Your cloud account</h2><p>Request account and cloud-data deletion. Support will review and process your request manually. Submitting does not delete anything immediately.</p><button id="tpk-request-delete">Request account deletion</button><p id="tpk-delete-status" role="status"></p></article></div><p class="tpk-pc-note">For assistance, email <a href="mailto:theparentkitchen@gmail.com">theparentkitchen@gmail.com</a>. Please avoid including sensitive information in emails.</p></section>'}
+function msg(t){const e=document.getElementById('tpk-delete-status');if(e)e.textContent=t}
+function keys(){return Object.keys(localStorage).filter(k=>k.startsWith('dw2_'))}
+function initPage(){
+ const exportBtn=document.getElementById('tpk-export-local');if(!exportBtn)return;
+ exportBtn.onclick=()=>{const state={exported_at:new Date().toISOString(),source:'this browser',data:{}};for(const k of keys())state.data[k]=localStorage.getItem(k);const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='parent-kitchen-browser-data.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),500)};
+ document.getElementById('tpk-clear-local').onclick=()=>{if(!confirm('Clear this browser’s saved Parent Kitchen preferences and meal plans? This will not remove cloud backups.'))return;for(const k of keys())localStorage.removeItem(k);alert('Browser data cleared. Cloud backups were not changed.');location.hash='#/today';if(typeof render==='function')render()};
+ document.getElementById('tpk-request-delete').onclick=async()=>{if(!confirm('Submit a request for support to review deletion of your account and associated cloud data? This is not immediate deletion.'))return;try{const c=client();const {data:{user}}=await c.auth.getUser();if(!user){msg('Sign in to request deletion.');return}const {error}=await c.from('account_deletion_requests').upsert({user_id:user.id,status:'pending'},{onConflict:'user_id'});if(error)throw error;msg('Deletion request received. Support must complete and confirm the deletion.')}catch(e){msg('Request could not be saved: '+e.message)}};
+ (async()=>{try{const c=client();const {data:{user}}=await c.auth.getUser();if(!user)return;const {data}=await c.from('account_deletion_requests').select('requested_at,status').eq('user_id',user.id).maybeSingle();if(data)msg('Existing request: '+data.status+' · '+new Date(data.requested_at).toLocaleDateString())}catch{}})();
+}
+function init(){if(typeof V==='undefined')return;V['privacy-center']=()=>{setTimeout(initPage,0);return page()}}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
