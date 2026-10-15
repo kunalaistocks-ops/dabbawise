@@ -255,7 +255,7 @@ const TABOF={a:'explore',myths:'explore',guides:'explore',g:'explore',myths:'exp
 function go(h){location.hash=h}
 function theme(){const t=LS('theme','system');document.documentElement.dataset.theme=t==='system'?(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'):t}
 let lastRoute='';
-function render(){theme();if(!REG()||!LS('onboarded')){if(!location.hash.startsWith('#/onboard'))return go('#/onboard/1')}
+function render(){theme();if(!REG())SV('region','in');/* Discovery is open to guests; onboarding is optional and only opens when requested. */
  if(location.hash.startsWith('#/care')){location.replace('#/heal');return}
  const parts=(location.hash.slice(2)||'today').split('/');const name=parts[0];const fn=V[name]||(()=>empty('search','Page not found','That link doesn’t match anything in Dabbawise.','<a class="btn pri" href="#/today">Go to Today</a>'));const tab=TABOF[name]??name;
  const same=lastRoute===location.hash;lastRoute=location.hash;const main=$('#main');
