@@ -8,7 +8,7 @@ const ALLOWED=['region','kids','goals','saved','onboarded','units'];
 const INCLUDED_PREFIXES=['plan_','boxes_','shop_','done_'];
 const allowed=k=>ALLOWED.includes(k)||INCLUDED_PREFIXES.some(p=>k.startsWith(p));
 let sb=null;
-function client(){if(!window.supabase?.createClient)throw Error('Cloud library could not load');return sb||(sb=window.supabase.createClient(URL,KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}}))}
+function client(){if(!window.supabase?.createClient)throw Error('Cloud library could not load');return sb||(sb=window.__dwSupabaseClient||(window.__dwSupabaseClient=window.supabase.createClient(URL,KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}})))}
 async function currentUser(){const {data,error}=await client().auth.getUser();if(error)throw error;return data.user}
 function localState(){const out={};for(let i=0;i<localStorage.length;i++){const full=localStorage.key(i);if(!full?.startsWith(PREFIX))continue;const k=full.slice(PREFIX.length);if(!allowed(k))continue;const raw=localStorage.getItem(full);if(raw!==null){try{out[k]=JSON.parse(raw)}catch{}}}return out}
 function message(text){const e=document.querySelector('#dw-sync-status');if(e)e.textContent=text}
