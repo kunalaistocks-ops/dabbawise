@@ -5,6 +5,7 @@ const logo='<span class="tpk-wordmark">the parent kitchen<span class="tpk-dot">.
 function rebrand(){
  document.querySelectorAll('a.logo').forEach(a=>{a.innerHTML=logo;a.setAttribute('aria-label','The Parent Kitchen — home')});
  const nav=document.querySelector('.sidex');
+ if(nav&&!nav.querySelector('.tpk-home-link')){const a=document.createElement('a');a.href='#/today';a.className='tpk-home-link';a.textContent='⌂ What can I do here?';nav.prepend(a)}
  if(nav&&!nav.querySelector('.tpk-nav-heading')){
   const head=document.createElement('div');head.className='tpk-nav-heading';head.textContent='THE PARENT KITCHEN';nav.prepend(head);
  }
