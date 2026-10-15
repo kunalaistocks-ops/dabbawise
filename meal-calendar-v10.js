@@ -25,7 +25,7 @@ function card(day,idx,id,p,school){
   if(type==='dinner')time='Evening';
  }
  const safeDay=esc(day),name=esc(r.name),rid=encodeURIComponent(r.id);
- return '<div class="dw-week-meal dw-week-'+esc(type)+'"><div class="dw-week-meal-head"><span>'+esc(title)+(time?' · '+esc(time):'')+'</span><small>~'+Number(r.mins||0)+' min prep</small></div><div class="dw-week-meal-main"><a href="#/r/'+rid+'">'+name+'</a><div class="dw-week-meal-actions"><button aria-label="Move '+name+'" onclick="moveAsk(\''+safeDay+'\','+idx+')">↔</button><button aria-label="Remove '+name+'" onclick="rmPlan(\''+safeDay+'\','+idx+')">×</button></div></div></div>';
+ return '<div class="dw-week-meal dw-week-'+esc(type)+'"><div class="dw-week-meal-head"><span>'+esc(title)+(time?' · '+esc(time):'')+'</span><small>~'+Number(r.mins||0)+' min average</small></div><div class="dw-week-meal-main"><a href="#/r/'+rid+'">'+name+'</a><div class="dw-week-meal-actions"><button aria-label="Move '+name+'" onclick="moveAsk(\''+safeDay+'\','+idx+')">↔</button><button aria-label="Remove '+name+'" onclick="rmPlan(\''+safeDay+'\','+idx+')">×</button></div></div></div>';
 }
 function build(){
  const p=pref(),days=typeof DAYS!=='undefined'?DAYS:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
