@@ -1,0 +1,79 @@
+/* Dabbawise bright family design — October 2026. Presentation-only overrides. */
+:root,html[data-theme="dark"],html[data-theme="light"]{
+ color-scheme:light!important;
+ --bg:#fcfdf9;--surface:#ffffff;--sunken:#f3f8f2;
+ --ink:#18352c;--ink2:#667b72;--line:#e6eee7;--line2:#d7e5db;
+ --acc:#13855e;--acc-ink:#ffffff;--acc-soft:#e4f7eb;--acc-soft-ink:#166d4c;
+ --warn-soft:#fff4da;--warn-ink:#806019;--bad-soft:#fff0ed;--bad-ink:#a4433d;
+ --sh:0 5px 24px rgba(35,80,58,.055),0 1px 3px rgba(35,80,58,.035);
+ --r-sm:12px;--r-md:16px;--r-lg:22px;
+}
+html,body{background:#fcfdf9!important;color:#18352c!important}
+body{font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.55}
+h1,h2,h3{color:#173e30;letter-spacing:-.025em}
+h1{font-weight:790}h2{font-weight:750}h3{font-weight:700}
+.mute,.sub,small{color:#697e74}
+.top{background:rgba(255,255,255,.96)!important;border-bottom:1px solid #e7eee8;box-shadow:0 2px 15px rgba(24,70,42,.035)}
+.logo{color:#176346!important;font-weight:850;letter-spacing:-.04em}
+.logo i{color:#f17d43}
+.side{background:#ffffff!important;border-color:#e7eee8}
+.tabs a,.sidex a{color:#61786e}
+.tabs a[aria-current=page],.sidex a[aria-current=page]{background:#e6f7ed!important;color:#116b4a!important;font-weight:750}
+.tabs a:hover,.sidex a:hover{background:#f0f8f2}
+.card{background:#fff!important;border-color:#e4ede5!important;box-shadow:var(--sh);border-radius:22px}
+.card.tap:hover,a.card:hover{border-color:#addac0!important;box-shadow:0 8px 25px rgba(26,95,60,.085)}
+.hero{background:linear-gradient(120deg,#e6f7e9 0%,#fff4d9 65%,#ffe9d9 100%)!important;color:#174934!important;border:1px solid #e4eddb!important;box-shadow:0 12px 36px rgba(66,118,72,.075);border-radius:26px}
+.hero h2,.hero h3,.hero .kicker{color:#155c40!important}
+.hero p{color:#4e7160!important;opacity:1!important}
+.kyf8,html[data-theme="dark"] .kyf8{background:linear-gradient(125deg,#e9f8e9,#fff4d9 65%,#ffe9e2)!important;border:1px solid #e5eddd;color:#174934!important;border-radius:25px}
+.kyf8 h2{color:#174934!important}
+button,.btn{border-radius:14px}
+button.pri,.btn.pri,.pri{background:#15885f!important;border-color:#15885f!important;color:#fff!important;box-shadow:0 4px 12px rgba(20,135,95,.14)}
+button.pri:hover,.btn.pri:hover{background:#0e704d!important}
+.kbtn,.ib:hover,.ticon{background:#ecf7ef!important;color:#176b4d!important}
+input,textarea,select{background:#fff!important;color:#18352c!important;border-color:#dce8de!important}
+input::placeholder,textarea::placeholder{color:#87998e}
+.ask8{background:#fff!important;border-color:#dbe9de!important;box-shadow:0 8px 25px rgba(30,80,50,.08)}
+.mic8{background:#e4f5ea!important;color:#16784f!important}
+.tag,.ev8.g{background:#e6f7eb!important;color:#1a754f!important}
+.tag.warn,.tag.warnt,.draft8{background:#fff4df!important;color:#835c1b!important}
+.note{background:#edf8ef!important;color:#2a6849!important}
+.note.warn{background:#fff5e3!important;color:#835c1b!important}
+.note.bad{background:#fff0ed!important;color:#9c3e36!important}
+.chip.on{background:#167b57!important;color:white!important;border-color:#167b57!important}
+.t-breakfast{background:#fff0d6!important;color:#9a661a!important}
+.t-lunchbox{background:#e3f7e8!important;color:#216c45!important}
+.t-snack{background:#ffedf0!important;color:#a94c61!important}
+.t-dinner{background:#e9efff!important;color:#4767a0!important}
+.ilcol.e,html[data-theme="dark"] .ilcol.e{background:#e8f8ed!important}
+.ilcol.y,html[data-theme="dark"] .ilcol.y{background:#fff4da!important}
+.ilcol.a,html[data-theme="dark"] .ilcol.a{background:#fff0ec!important}
+.age,.azj a{background:#f2f8f3!important}
+.age.mine{background:#e4f5e9!important;color:#1a704e!important}
+.ev8.t{background:#f0eafb!important;color:#6a50a3!important}
+.side .logo{padding-bottom:14px}
+@media(min-width:1024px){
+ body{padding-left:240px}
+ #main{max-width:1100px;padding:32px 36px 75px}
+ .side{width:240px}
+ .top{height:70px}
+ .rgrid{gap:18px}
+ .hero{padding:30px}
+}
+@media(max-width:1023px){
+ #main{max-width:760px}
+ .side{background:rgba(255,255,255,.98)!important}
+}
+@media(max-width:600px){
+ #main{padding:18px 15px calc(95px + env(safe-area-inset-bottom))}
+ .top{height:62px}
+ .tabs{grid-template-columns:repeat(5,minmax(0,1fr))}
+ .tabs a{font-size:10.5px;min-width:0;gap:3px;text-align:center}
+ .tabs a .i{width:21px;height:21px}
+ .card{padding:17px;border-radius:19px}
+ .hero,.kyf8{padding:20px;border-radius:21px}
+ h1{font-size:clamp(25px,6vw,33px)}
+ .tools{gap:10px}
+ .tool{padding:13px}
+}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
