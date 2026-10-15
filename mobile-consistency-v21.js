@@ -20,13 +20,17 @@ function openMenu(){
 }
 function init(){
  const nav=document.querySelector('.tabs');if(!nav)return;
- nav.querySelectorAll('.tpk-primary-tab').forEach(el=>el.classList.add('tpk-desktop-only'));
- for(const key of ['meals','heal']){const a=nav.querySelector('a[data-t="'+key+'"]');if(a)a.classList.add('tpk-mobile-secondary')}
- const week=nav.querySelector('a[data-t="week"]');if(week)week.classList.add('tpk-mobile-plan');
- const food=nav.querySelector('.tpk-main-truth');if(food)food.classList.add('tpk-mobile-truth');
- if(!nav.querySelector('#tpk-mobile-more')){
-  const b=document.createElement('button');b.type='button';b.id='tpk-mobile-more';b.className='tpk-mobile-more';b.setAttribute('aria-label','More sections');b.innerHTML='<span aria-hidden="true">☰</span><span>More</span>';b.onclick=openMenu;nav.appendChild(b);
- }
+ nav.querySelectorAll('a[data-t="explore"],a[data-t="meals"]').forEach(a=>a.classList.add('tpk-mobile-hidden'));
+ const today=nav.querySelector('a[data-t="today"]');
+ const week=nav.querySelector('a[data-t="week"]');
+ const heal=nav.querySelector('a[data-t="heal"]');
+ const truth=nav.querySelector('.tpk-main-truth');
+ const community=nav.querySelector('.tpk-main-community');
+ if(week){week.classList.add('tpk-mobile-show');const label=week.querySelector('span');if(label)label.textContent='Dabbawise'}
+ if(heal){heal.classList.add('tpk-mobile-show');const label=heal.querySelector('span');if(label)label.textContent='Grow Well'}
+ for(const a of [truth,community])if(a)a.classList.add('tpk-mobile-show');
+ const more=nav.querySelector('#tpk-mobile-more');more?.remove();
+ if(today&&week&&truth&&heal&&community){for(const a of [today,week,truth,heal,community])nav.appendChild(a)}
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
