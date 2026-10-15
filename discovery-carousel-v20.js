@@ -2,11 +2,10 @@
 (function(){
 'use strict';
 const features=[
- {icon:'🥗',tag:'DABBAWISE · MEAL PLANNING',title:'Never wonder what to pack for lunch again.',description:'Tell us about school, activities and food preferences. Build an editable week of breakfasts, lunchboxes, snacks and dinners.',cta:'Plan my child’s meals',href:'#/week',color:'mint'},
- {icon:'🍎',tag:'FOODPEDIA · NUTRITION',title:'Is this food right for my child?',description:'Look up everyday ingredients, explore nutrients, and see age-aware food guidance. Source-linked USDA lookup is available.',cta:'Explore food and nutrients',href:'#/explore',color:'peach'},
- {icon:'🛡️',tag:'FOOD TRUTHS · PACKAGED FOODS',title:'Know what’s really inside the packet.',description:'Learn to read labels, compare sugar and nutrition claims, and browse independently verified product information as the catalogue grows.',cta:'Check a packaged food',href:'#/food-truth',color:'butter'},
- {icon:'🌱',tag:'GROW WELL · FAMILY GUIDANCE',title:'Understand food, growth and everyday worries.',description:'Find practical guidance about nutrition, food safety and feeding questions. Educational guidance is not a medical diagnosis.',cta:'Explore Grow Well',href:'#/heal',color:'mint'},
- {icon:'♥',tag:'COOK TOGETHER · COMMUNITY',title:'Discover what other parents are making.',description:'Find family recipes, share your own idea by text or voice, and receive creator credit after moderation.',cta:'Discover parent recipes',href:'#/parent-kitchen',color:'rose'}
+ {icon:'🥗',tag:'DABBAWISE · MEAL PLANNING',title:'Plan meals around your child’s day.',description:'Create a school-friendly weekly plan with breakfast, lunchbox, snacks and dinner. Browse recipes and see nutrition information when available.',cta:'Plan meals',href:'#/week',color:'mint'},
+ {icon:'🛡️',tag:'FOOD TRUTHS · PACKAGED FOODS',title:'Know what is inside their food.',description:'Understand food labels, sugar and marketing claims. Product-specific findings are shown only when evidence has been verified.',cta:'Explore Food Truths',href:'#/food-truth',color:'butter'},
+ {icon:'🌱',tag:'GROW WELL · NUTRITION',title:'Understand nutrition and growth.',description:'Explore everyday food nutrients, age-aware guidance, feeding questions and food safety. Look up ingredients in Foodpedia.',cta:'Explore Grow Well',href:'#/heal',color:'peach'},
+ {icon:'♥',tag:'COOK TOGETHER · COMMUNITY',title:'Find ideas that bring families together.',description:'Discover parent recipes, share your own ideas by text or voice and receive credit after review. Explore food activities together.',cta:'Open Cook Together',href:'#/parent-kitchen',color:'rose'}
 ];
 const descriptions={
  today:'Start here. See the ways The Parent Kitchen helps with food choices, meal planning and parent recipes.',
@@ -41,6 +40,10 @@ function setup(){
  const root=document.getElementById('tpk-tour');if(!root||root.dataset.ready)return;
  root.dataset.ready='1';paint();
  root.addEventListener('mouseenter',stop);root.addEventListener('mouseleave',start);
+ let touchStart=null;
+ root.addEventListener('touchstart',e=>{if(e.touches.length!==1)return;touchStart={x:e.touches[0].clientX,y:e.touches[0].clientY};stop()},{passive:true});
+ root.addEventListener('touchend',e=>{if(!touchStart||!e.changedTouches.length)return;const dx=e.changedTouches[0].clientX-touchStart.x,dy=e.changedTouches[0].clientY-touchStart.y;touchStart=null;if(Math.abs(dx)>45&&Math.abs(dx)>Math.abs(dy)*1.3){next(dx<0?1:-1)}start()},{passive:true});
+ root.addEventListener('touchcancel',()=>{touchStart=null;start()},{passive:true});
  root.addEventListener('focusin',stop);root.addEventListener('focusout',e=>{if(!root.contains(e.relatedTarget))start()});
  root.querySelector('#tpk-tour-prev').onclick=()=>{next(-1);start()};
  root.querySelector('#tpk-tour-next').onclick=()=>{next(1);start()};
