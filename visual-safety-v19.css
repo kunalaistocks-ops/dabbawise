@@ -1,0 +1,46 @@
+/* V19 visual safety pass — prevent cropped brand, buttons and navigation. */
+:root{--tpk-sidebar-width:272px}
+@media(min-width:1024px){
+ body{padding-left:var(--tpk-sidebar-width)!important}
+ .side{width:var(--tpk-sidebar-width)!important;min-width:var(--tpk-sidebar-width)!important;overflow-x:hidden!important;padding:14px 12px!important}
+ .side .logo{box-sizing:border-box;display:flex!important;align-items:center;max-width:100%;width:100%;min-width:0;margin:0!important;padding:10px 4px 17px!important;overflow:visible!important}
+ .side .tpk-brand-lockup{gap:7px!important;min-width:0;max-width:100%!important}
+ .side .tpk-brand-bowl{width:32px!important;height:32px!important}
+ .side .logo .tpk-brand-lockup .tpk-wordmark{font-size:18px!important;letter-spacing:-.065em!important;white-space:nowrap!important}
+ .tabs a,.sidex a{width:100%;min-width:0!important}
+ .tabs a span:not(.tpk-tab-icon){overflow-wrap:anywhere}
+ #tpk-utility{padding-left:20px}
+}
+@media(min-width:1024px) and (max-width:1150px){
+ :root{--tpk-sidebar-width:250px}
+ .side .logo .tpk-brand-lockup .tpk-wordmark{font-size:16px!important}
+ .side .tpk-brand-bowl{width:29px!important;height:29px!important}
+}
+@media(max-width:1023px){
+ .top .logo.m{display:inline-flex!important;min-width:0!important;max-width:calc(100vw - 205px)!important;overflow:visible!important}
+ .top .logo .tpk-brand-lockup{gap:5px!important;min-width:0!important}
+ .top .logo .tpk-brand-bowl{width:29px!important;height:29px!important}
+ .top .logo .tpk-wordmark{font-size:clamp(13px,2.6vw,18px)!important;white-space:nowrap!important}
+ .top .kbtn{min-width:40px!important;flex-shrink:0!important}
+ .top{gap:6px!important}
+}
+#tpk-utility{box-sizing:border-box;max-width:100%;width:100%;overflow:visible!important;flex-wrap:wrap!important;align-items:center!important;gap:8px!important}
+#tpk-utility>button{position:static!important;transform:none!important;inset:auto!important;flex:0 1 auto!important;max-width:100%!important;min-width:0!important;white-space:normal!important;line-height:1.25!important}
+#tpk-utility #dw-account-btn{max-width:210px!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important}
+#main,.view,.tpk-start,.ft-hero,.pk-hero{min-width:0!important;max-width:100%;box-sizing:border-box}
+.tpk-start-grid,.dw-week-grid,.ft-tiles,.pk-grid{min-width:0}
+.tpk-start-grid>*{min-width:0}
+.tpk-start-grid b,.tpk-start-grid small{overflow-wrap:break-word}
+button,a,input,select,textarea{touch-action:manipulation}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #28946b!important;outline-offset:2px!important}
+@media(max-width:650px){
+ #tpk-utility{padding:8px 12px!important;gap:6px!important}
+ #tpk-utility>button{flex:1 1 auto!important;font-size:11px!important;min-height:42px!important}
+ #tpk-utility #dw-account-btn{max-width:100%!important}
+ .top .logo.m{max-width:calc(100vw - 115px)!important}
+ .top .logo .tpk-wordmark{font-size:clamp(12px,3.4vw,16px)!important}
+ .top .logo .tpk-brand-bowl{width:27px!important;height:27px!important}
+ .top .kbtn{min-width:40px!important;width:40px!important;padding:0!important;justify-content:center!important}
+ .top .kbtn .kl,.top .kbtn kbd{display:none!important}
+}
+@media(max-width:370px){.top .logo .tpk-wordmark{font-size:12px!important}.top .logo .tpk-brand-bowl{width:24px!important;height:24px!important}}
