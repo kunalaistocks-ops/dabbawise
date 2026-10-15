@@ -4,7 +4,7 @@
 const URL='https://iyabdhmvbtlhxntzafth.supabase.co';
 const KEY='sb_publishable_CFrNt-ICIUYv9culGxLI8w_JoJQFHdp';
 const PREFIX='dw2_';
-const ALLOWED=['region','kids','goals','saved','onboarded','units'];
+const ALLOWED=['region','kids','goals','saved','onboarded','units','meal_preferences'];
 const INCLUDED_PREFIXES=['plan_','boxes_','shop_','done_'];
 const allowed=k=>ALLOWED.includes(k)||INCLUDED_PREFIXES.some(p=>k.startsWith(p));
 let sb=null;
