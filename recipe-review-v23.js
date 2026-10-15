@@ -31,7 +31,21 @@ async function decide(button){
  if(!confirm(status==='published'?'Publish this parent recipe publicly?':'Reject this recipe and keep it out of the public feed?'))return;
  card.querySelectorAll('button').forEach(b=>b.disabled=true);
  try{
-  const {error}=await client().from('community_recipes').update({status,moderator_note:note||null,updated_at:new Date().toISOString()}).eq('id',card.dataset.id).eq('status','pending');
+  let publicPhoto=null;
+ if(status==='published'&&recipe?.private_photo_path){
+  const allowPhoto=confirm('Publish the photo too? Select OK only after checking child privacy, ownership and personal details. Select Cancel to publish text only.');
+  if(allowPhoto){
+   const sb=client();
+   const {data:blob,error:downloadError}=await sb.storage.from('parent-recipe-private').download(recipe.private_photo_path);
+   if(downloadError)throw downloadError;
+   const extension=recipe.private_photo_path.split('.').pop();
+   const path=recipe.id+'.'+extension;
+   const {error:uploadError}=await sb.storage.from('parent-recipe-public').upload(path,blob,{upsert:false,contentType:blob.type||'image/jpeg'});
+   if(uploadError)throw uploadError;
+   publicPhoto=sb.storage.from('parent-recipe-public').getPublicUrl(path).data.publicUrl;
+  }
+ }
+ const {error}=await client().from('community_recipes').update({status,moderator_note:note||null,photo_url:publicPhoto,photo_reviewed_at:publicPhoto?new Date().toISOString():null,updated_at:new Date().toISOString()}).eq('id',card.dataset.id).eq('status','pending');
   if(error)throw error;
   await load();
  }catch(e){message('Review action failed: '+e.message);card.querySelectorAll('button').forEach(b=>b.disabled=false)}
