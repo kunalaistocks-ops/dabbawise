@@ -1,0 +1,18 @@
+/* First-visit action hub: primary value immediately visible on every fresh visit. */
+.tpk-start{background:#fff;border:1px solid #e1ece4;border-radius:24px;padding:24px;margin:0 0 26px;box-shadow:0 10px 30px #254d330a}
+.tpk-start-top{padding:22px 25px;background:linear-gradient(115deg,#eaf7ed,#fff5e6);border-radius:19px;margin-bottom:16px}
+.tpk-eyebrow{font-size:11px;font-weight:850;letter-spacing:.12em;color:#197a52}
+.tpk-start-top h1{font-family:Inter,ui-sans-serif,system-ui,sans-serif!important;font-size:clamp(29px,3.7vw,43px)!important;font-weight:800!important;letter-spacing:-.045em!important;line-height:1.12!important;color:#1d543a!important;margin:11px 0!important}
+.tpk-start-top p{font-size:15px;color:#5f7a69;max-width:700px;margin:0}
+.tpk-start-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.tpk-start-grid>a{display:flex;flex-direction:column;align-items:flex-start;gap:7px;background:#fbfdfa;border:1px solid #e1ebe3;border-radius:17px;padding:20px;color:#244f37;transition:transform .15s,border-color .15s}
+.tpk-start-grid>a:hover{border-color:#91c8a6;transform:translateY(-2px);background:#f1f9f3}
+.tpk-start-icon{font-size:27px}.tpk-start-grid b{font-size:19px;letter-spacing:-.025em;line-height:1.25}
+.tpk-start-grid small{font-size:13px;line-height:1.5;color:#6b8070;max-width:330px}
+.tpk-start-grid em{font-size:12px;font-weight:800;font-style:normal;color:#16815a;margin-top:auto;padding-top:6px}
+.tpk-start-shortcuts{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-top:17px}
+.tpk-start-shortcuts button,.tpk-start-shortcuts a{border:1px solid #dbe9dd;background:#edf8f0;color:#1c7551;border-radius:999px;padding:9px 13px;min-height:41px;font-size:12px;font-weight:750}
+.tpk-start-shortcuts a{display:inline-flex;align-items:center}
+.tpk-start-hint{color:#819286;font-size:11px;line-height:1.5;margin:15px 0 0}
+.tpk-home-link{display:block;padding:12px 15px;background:#eaf7ef;border-radius:13px;color:#216e4c;font-weight:800;margin-bottom:12px}
+@media(max-width:650px){.tpk-start{padding:12px;border-radius:19px}.tpk-start-top{padding:20px 16px}.tpk-start-top p{font-size:13px}.tpk-start-grid{grid-template-columns:1fr;gap:9px}.tpk-start-grid>a{padding:15px}.tpk-start-grid b{font-size:17px}.tpk-start-shortcuts button,.tpk-start-shortcuts a{flex:1;justify-content:center}}
