@@ -62,6 +62,7 @@ function init(){
  if(main)new MutationObserver(()=>{if(!document.getElementById('tpk-tour'))queueMicrotask(mount);else if(location.hash.startsWith('#/today'))setup()}).observe(main,{childList:true,subtree:false});
  addEventListener('hashchange',()=>setTimeout(mount,120));
  mount();
+ if(location.hash===''||location.hash==='#/'||location.hash.startsWith('#/today')){try{history.scrollRestoration='manual'}catch{}requestAnimationFrame(()=>window.scrollTo({top:0,left:0,behavior:'instant'}))}
  addEventListener('visibilitychange',()=>{document.hidden?stop():start()});
  installNavHints();
 }
