@@ -1,7 +1,7 @@
 /* The Parent Kitchen — umbrella identity; existing Dabbawise features preserved. */
 (function(){
 'use strict';
-const logo='<span class="tpk-wordmark">the parent kitchen<span class="tpk-dot">.</span></span>';
+const logo='<span class="tpk-brand-lockup"><span class="tpk-brand-bowl" aria-hidden="true"><svg viewBox="0 0 48 48" width="39" height="39" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="18" cy="11" r="6" fill="#2B5E48"/><circle cx="29" cy="16" r="4.6" fill="#E77E42"/><path d="M7 22h34c-1 11-8 17-17 17S8 33 7 22Z" fill="#2B5E48"/><path d="M12 42h24" stroke="#2B5E48" stroke-width="3" stroke-linecap="round"/></svg></span><span class="tpk-wordmark">the parent kitchen<span class="tpk-dot">.</span></span></span>';
 function rebrand(){
  document.querySelectorAll('a.logo').forEach(a=>{a.innerHTML=logo;a.setAttribute('aria-label','The Parent Kitchen — home')});
  const nav=document.querySelector('.sidex');
