@@ -48,17 +48,20 @@ function setup(){
  root.querySelector('#tpk-tour-pause').onclick=e=>{paused=!paused;e.currentTarget.textContent=paused?'▶ Play':'Ⅱ Pause';e.currentTarget.setAttribute('aria-label',paused?'Play carousel':'Pause carousel');paused?stop():start()};
  start();
 }
-function init(){
- if(typeof V==='undefined'||typeof V.today!=='function')return;
- const prev=V.today;
- if(!prev.__tpkTour){
-   const wrapped=function(...args){return html()+prev(...args)};
-   wrapped.__tpkTour=true;V.today=wrapped;
- }
+function mount(){
+ const home=location.hash===''||location.hash==='#/'||location.hash.startsWith('#/today');
  const main=document.getElementById('main');
- if(main){new MutationObserver(()=>{if(location.hash==='#/today'||location.hash===''||location.hash==='#/'){setup()}else stop()}).observe(main,{childList:true})}
- if((location.hash==='#/today'||location.hash===''||location.hash==='#/')&&!document.getElementById('tpk-tour')&&typeof render==='function')render();
+ if(!home||!main){stop();return}
+ const view=main.querySelector('.view');
+ if(!view)return;
+ if(!view.querySelector('#tpk-tour'))view.insertAdjacentHTML('afterbegin',html());
  setup();
+}
+function init(){
+ const main=document.getElementById('main');
+ if(main)new MutationObserver(()=>{if(!document.getElementById('tpk-tour'))queueMicrotask(mount);else if(location.hash.startsWith('#/today'))setup()}).observe(main,{childList:true,subtree:false});
+ addEventListener('hashchange',()=>setTimeout(mount,120));
+ mount();
  addEventListener('visibilitychange',()=>{document.hidden?stop():start()});
  installNavHints();
 }
