@@ -31,3 +31,6 @@ Security boundaries: never reuse Supabase project IDs, keys, database sessions o
 3. Retest private-to-public photo lifecycle, including upload failure, DB failure, rejection, deletion and anonymous access.
 4. Gather current, attributable Food Truths label evidence and verify manually.
 5. Confirm parent data export, deletion process, cloud restore, mobile navigation and accessibility.
+
+## Staging observation
+17 October: Vercel reported READY for a non-production preview from this working branch. The new photo assets are present on the branch but have not been wired into the main HTML, so this is not a successful end-to-end feature test.
