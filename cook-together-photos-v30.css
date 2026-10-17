@@ -1,0 +1,13 @@
+/* Cook Together photos appear only after moderator approval. */
+.pk-card-photo {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  border-radius: 14px;
+  margin: 0 0 16px;
+  background: #f4f6ef;
+}
+@media (prefers-reduced-motion: reduce) {
+  .pk-card-photo { animation: none; transition: none; }
+}
