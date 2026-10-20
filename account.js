@@ -1,12 +1,14 @@
 /* Dabbawise parent accounts — Supabase Auth. Google requires provider setup in Supabase. */
 (function(){
 'use strict';
-const URL='https://iyabdhmvbtlhxntzafth.supabase.co',KEY='sb_publishable_CFrNt-ICIUYv9culGxLI8w_JoJQFHdp';
+const CONFIG=window.__dwPublicConfig;
+if(!CONFIG||CONFIG.environment!=="staging"||!CONFIG.url.includes("siiwuukihzwkmgutijyl.supabase.co"))throw Error("QA Supabase configuration missing or unsafe");
+const URL=CONFIG.url,KEY=CONFIG.publishableKey;
 let client=null,user=null,shown=false;
 const $=s=>document.querySelector(s);
 function safe(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function status(s){const e=$('#dw-auth-status');if(e)e.textContent=s}
-function getClient(){if(client)return client;if(!window.supabase?.createClient)throw Error('Authentication service is unavailable. Check your connection.');client=window.__dwSupabaseClient||(window.__dwSupabaseClient=window.supabase.createClient(URL,KEY,{auth:{autoRefreshToken:true,persistSession:true,detectSessionInUrl:true}}));return client}
+function getClient(){if(client)return client;if(!window.supabase?.createClient)throw Error('Authentication service is unavailable. Check your connection.');client=window.__dwSupabaseClient||(window.__dwSupabaseClient=window.supabase.createClient(URL,KEY,{auth:{autoRefreshToken:true,persistSession:true,detectSessionInUrl:true,storageKey:CONFIG.storageKey}}));return client}
 function close(){document.querySelector('#dw-auth-overlay')?.remove();shown=false}
 function modal(){if(shown)return;shown=true;const root=document.createElement('div');root.id='dw-auth-overlay';root.innerHTML='<section class="dw-auth-dialog" role="dialog" aria-modal="true" aria-labelledby="dw-auth-title"><button type="button" id="dw-auth-close" class="dw-auth-close" aria-label="Close">×</button><div class="dw-auth-brand">🥬 Dabbawise</div><h2 id="dw-auth-title">Your family’s food companion</h2><p>Sign in to keep your preferences and meal plans across devices. You can still explore food without an account.</p><button id="dw-google" type="button" class="dw-google"><span class="dw-g">G</span> Continue with Google</button><div class="dw-or">or continue with email</div><form id="dw-email-form"><label for="dw-email">Email address</label><input id="dw-email" type="email" autocomplete="email" placeholder="parent@example.com" required><button class="dw-submit" type="submit">Email me a sign-in link</button></form><p id="dw-auth-status" role="status" aria-live="polite"></p><button class="dw-guest" type="button" id="dw-guest">Continue without signing in</button><p class="dw-privacy">For parents and guardians. We do not ask children to register. Avoid entering medical information until the full privacy review is complete.</p></section>';document.body.appendChild(root);
 $('#dw-auth-close').onclick=close;$('#dw-guest').onclick=close;root.onclick=e=>{if(e.target===root)close()};
