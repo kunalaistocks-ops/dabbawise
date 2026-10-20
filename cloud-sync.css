@@ -1,13 +1,9 @@
-#dw-sync-btn{position:fixed;right:155px;top:9px;z-index:45;min-height:42px;padding:8px 12px;background:#eaf7ed;color:#176b4d;border:1px solid #d9e9dd;border-radius:999px;font-size:12px;font-weight:750}
+
 #dw-sync-overlay{position:fixed;inset:0;z-index:205;background:#102f239e;display:grid;place-items:center;padding:16px}
 .dw-sync-dialog{position:relative;width:min(440px,100%);background:#fff;color:#193a2a;border-radius:24px;padding:26px;box-shadow:0 24px 80px #102a2345}
 .dw-sync-dialog h2{font-size:23px}.dw-sync-dialog p{color:#62796d;font-size:14px}.dw-sync-dialog button:not(.dw-sync-close){display:block;width:100%;margin:12px 0;background:#16865e;color:#fff;border:0;border-radius:13px;min-height:46px;font-weight:750}
 .dw-sync-dialog button#dw-sync-load{background:#e9f6ed;color:#176b4d}.dw-sync-close{position:absolute;right:12px;top:10px;border:0;background:transparent;font-size:25px;width:38px;height:38px;padding:0}
 .dw-sync-note{font-size:12px!important;border-top:1px solid #e6eee7;padding-top:12px}#dw-sync-status{color:#177750;font-weight:650}
-@media(max-width:600px){#dw-sync-btn{right:122px;top:10px;padding:8px;font-size:11px;min-height:40px}}
-/* QA: persistent, independent cloud-backup action; never reparent into a dynamically rebuilt toolbar. */
-#dw-sync-btn{display:inline-flex!important;align-items:center!important;justify-content:center!important;visibility:visible!important;opacity:1!important;position:fixed!important;bottom:20px!important;right:20px!important;top:auto!important;left:auto!important;z-index:190!important;min-height:48px!important;padding:10px 18px!important;box-shadow:0 8px 24px #102a2330!important;cursor:pointer!important}
-@media(max-width:600px){#dw-sync-btn{bottom:16px!important;right:12px!important;top:auto!important;font-size:13px!important}}
 
-/* Toolbar layout takes precedence over historical floating styles. */
-#tpk-utility #dw-sync-btn{position:static!important;inset:auto!important;top:auto!important;right:auto!important;bottom:auto!important;left:auto!important;transform:none!important;margin:0 8px!important;box-shadow:none!important;flex:0 0 auto!important;min-height:40px!important;z-index:auto!important}
+
+.dw-cloud-context{display:flex;justify-content:flex-end;margin:12px 0 20px;position:static;clear:both}.dw-cloud-context button{position:static;border:1px solid #d9e9dd;background:#eaf7ed;color:#176b4d;border-radius:999px;padding:10px 18px;min-height:42px;font-weight:700;cursor:pointer}.dw-cloud-context button:hover{background:#d9f0e0}
