@@ -1,8 +1,7 @@
 /* User-confirmed USDA ingredient matching. Never auto-assign a search hit. */
 (function(){
 'use strict';
-const base='https://iyabdhmvbtlhxntzafth.supabase.co';
-const key='sb_publishable_CFrNt-ICIUYv9culGxLI8w_JoJQFHdp';
+const CONFIG=window.__dwPublicConfig;if(!CONFIG||CONFIG.environment!=='staging')throw Error('Staging configuration required');const base=CONFIG.url,key=CONFIG.publishableKey;
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]));
 let currentRow=null,matches=[];
 const client=()=>window.__dwSupabaseClient||(window.__dwSupabaseClient=window.supabase.createClient(base,key));
