@@ -1,7 +1,7 @@
 /* Food Truth: verified evidence only, clear separation between fact and commentary. */
 (function(){
 'use strict';
-const URL='https://iyabdhmvbtlhxntzafth.supabase.co',KEY='sb_publishable_CFrNt-ICIUYv9culGxLI8w_JoJQFHdp';
+const CONFIG=window.__dwPublicConfig;if(!CONFIG||CONFIG.environment!=='staging')throw Error('Staging configuration required');const URL=CONFIG.url,KEY=CONFIG.publishableKey;
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]));
 const client=()=>window.__dwSupabaseClient||(window.__dwSupabaseClient=window.supabase.createClient(URL,KEY));
 let results=[],country='both';
