@@ -17,6 +17,26 @@ function message(text){const e=document.querySelector('#dw-sync-status');if(e)e.
 async function save(){const u=await currentUser();if(!u)throw Error('Sign in first.');const state=localState();if(!confirm('Save your family preferences, child profiles, and meal plans to your private cloud account? This may include allergy information you entered.'))return;const {error}=await client().from('app_snapshots').upsert({user_id:u.id,state,updated_at:new Date().toISOString()},{onConflict:'user_id'});if(error)throw error;message('Saved to your private account.')}
 async function restore(){const u=await currentUser();if(!u)throw Error('Sign in first.');const {data,error}=await client().from('app_snapshots').select('state,updated_at').eq('user_id',u.id).maybeSingle();if(error)throw error;if(!data){message('No cloud backup found for this account.');return}if(!confirm('Replace your current local Dabbawise settings, child profiles and plans with the cloud backup?'))return;for(const [k,v] of Object.entries(data.state||{})){if(allowed(k))localStorage.setItem(PREFIX+k,JSON.stringify(v))}message('Cloud backup restored. Reloading…');location.reload()}
 function open(){document.querySelector('#dw-sync-overlay')?.remove();const el=document.createElement('div');el.id='dw-sync-overlay';el.innerHTML='<section role="dialog" aria-modal="true" aria-labelledby="dw-sync-title" class="dw-sync-dialog"><button class="dw-sync-close" aria-label="Close">×</button><h2 id="dw-sync-title">Your private family backup</h2><p>Keep your saved meal plans and family preferences available across devices. Backups happen only when you choose.</p><button id="dw-sync-save">Save to cloud</button><button id="dw-sync-load">Restore from cloud</button><p id="dw-sync-status" role="status"></p><p class="dw-sync-note">You must be signed in. Never store passwords or sensitive clinical records in your profile. Review your allergy information before relying on any recipe.</p></section>';document.body.appendChild(el);el.querySelector('.dw-sync-close').onclick=()=>el.remove();el.onclick=e=>{if(e.target===el)el.remove()};el.querySelector('#dw-sync-save').onclick=()=>save().catch(e=>message('Save failed: '+(e.message||'unknown error')+' — please send us this exact message.'));el.querySelector('#dw-sync-load').onclick=()=>restore().catch(e=>message('Restore failed: '+(e.message||'unknown error')));currentUser().then(u=>message(u?'Signed in. Ready to back up.':'Not signed in. Please sign in with Google first.')).catch(e=>message('Authentication check failed: '+e.message))}
-function init(){let b=document.getElementById('dw-sync-btn');if(!b){b=document.createElement('button');b.id='dw-sync-btn';b.type='button'}b.textContent='☁ Cloud backup';b.title='Save or restore your family data';b.onclick=open;const strip=document.getElementById('tpk-utility');if(strip)strip.appendChild(b);else if(!b.isConnected)document.body.appendChild(b);b.style.setProperty('display','inline-flex','important');b.style.setProperty('visibility','visible','important');b.style.setProperty('position','static','important');b.style.setProperty('opacity','1','important');b.style.setProperty('z-index','20','important');}
+function init(){
+ const old=document.getElementById('dw-sync-btn');if(old)old.remove();
+ const selectors=['a[href="#/week"]','a[href="#/saved"]','a[href="#/shop"]'];
+ const mount=()=>{
+  document.querySelectorAll('.dw-cloud-context').forEach(e=>e.remove());
+  const route=location.hash||'#/today';
+  const relevant=/^#\/(week|saved|shop|onboard|settings)/.test(route);
+  if(!relevant)return;
+  const main=document.getElementById('main');if(!main)return;
+  const anchor=main.querySelector('.dw-week-top,.dw-planner-hero,h1');
+  if(!anchor)return;
+  const box=document.createElement('div');box.className='dw-cloud-context';
+  const b=document.createElement('button');b.type='button';b.textContent='☁ Back up to cloud';b.onclick=open;b.title='Explicitly save your family data to your private cloud account';
+  box.appendChild(b);anchor.insertAdjacentElement('afterend',box);
+ };
+ const observer=new MutationObserver(()=>{if(document.querySelector('.dw-cloud-context'))return;mount()});
+ const main=document.getElementById('main');if(main)observer.observe(main,{childList:true,subtree:false});
+ window.addEventListener('hashchange',()=>setTimeout(mount,80));setTimeout(mount,200);
+ window.dwOpenCloudBackup=open;
+}
+
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
