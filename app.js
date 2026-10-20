@@ -129,7 +129,7 @@ V.r=id=>{const r=getR(id);if(!r)return empty('meal','Recipe not found','','<a cl
  <p class="mute small">Recipe draft — adapt textures for your child’s age; see the Choking checker for under-5s.</p></article>`};
 /* Planner */
 const plan=()=>LS('plan_'+REG(),{});
-function pickDay(id){modal(`<h2>Add to which day?</h2><div class="chips wrap">${DAYS.map(d=>`<button class="chip" onclick="addPlan('${d}','${id}');closeM()">${d}</button>`).join('')}</div>`)}
+function pickDay(id){modal(`<h2>Add to your meal plan</h2><p class="mute">Choose a day. Your meal is saved immediately.</p><div class="chips wrap">${DAYS.map(d=>`<button class="chip" onclick="addPlan('${d}','${id}');closeM();location.hash='#/week';render()">+ ${d}</button>`).join('')}</div><p><button class="btn" onclick="closeM();location.hash='#/week';render()">View my meal plan →</button></p>`)}
 function addPlan(d,id){const p=plan();(p[d]=p[d]||[]).push(id);SV('plan_'+REG(),p);toast('Added to '+d)}
 function rmPlan(d,i){const p=plan(),prev=JSON.stringify(p);p[d].splice(i,1);SV('plan_'+REG(),p);toast('Removed',()=>SV('plan_'+REG(),JSON.parse(prev)));render()}
 function movePlan(fd,i,td){const p=plan();const[id]=p[fd].splice(i,1);(p[td]=p[td]||[]).push(id);SV('plan_'+REG(),p);render()}
