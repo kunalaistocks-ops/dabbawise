@@ -4,7 +4,7 @@
 const CONFIG=window.__dwPublicConfig;
 if(!CONFIG||CONFIG.environment!=="staging"||!CONFIG.url.includes("siiwuukihzwkmgutijyl.supabase.co"))throw Error("QA Supabase configuration missing or unsafe");
 const URL=CONFIG.url,KEY=CONFIG.publishableKey;
-const KEY='sb_publishable_CFrNt-ICIUYv9culGxLI8w_JoJQFHdp';
+
 const PREFIX='dw2_qa_';
 const ALLOWED=['region','kids','goals','saved','onboarded','units','meal_preferences','day_routine'];
 const INCLUDED_PREFIXES=['plan_','boxes_','shop_','done_'];
